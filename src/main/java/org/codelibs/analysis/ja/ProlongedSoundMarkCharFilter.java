@@ -27,16 +27,22 @@ public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
 
     private static final char U30FC = '\u30fc'; // KATAKANA-HIRAGANA SOUND MARK
 
+    private final char replacement;
+
     public ProlongedSoundMarkCharFilter(final Reader in) {
+        this(in, U30FC);
+    }
+
+    public ProlongedSoundMarkCharFilter(final Reader in, final char replacement) {
         super(in);
+        this.replacement = replacement;
     }
 
     @Override
     CharSequence processInput(final CharSequence input) {
         final StringBuilder buf = new StringBuilder(input.length());
-        final int pos = 0;
         char prev = 0;
-        while (pos < input.length()) {
+        for (int pos = 0; pos < input.length(); pos++) {
             final char c = input.charAt(pos);
             switch (c) {
             case U002D:
@@ -49,12 +55,13 @@ public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
             case U2015:
             case U207B:
             case U208B:
+            case U30FC:
                 if (prev != 0) {
                     final UnicodeBlock block = UnicodeBlock.of(prev);
                     if (block == UnicodeBlock.HIRAGANA
                             || block == UnicodeBlock.KATAKANA
                             || block == UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS) {
-                        buf.append(U30FC);
+                        buf.append(replacement);
                     } else {
                         buf.append(c);
                     }
