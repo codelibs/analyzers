@@ -162,6 +162,7 @@ public class KanjiNumberFilter extends TokenFilter {
 
             final String normalizedNumber = normalizeNumber(numeral.toString());
 
+            restoreState(preCompositionState);
             termAttr.setEmpty();
             termAttr.append(normalizedNumber);
             offsetAttr.setOffset(startOffset, endOffset);
