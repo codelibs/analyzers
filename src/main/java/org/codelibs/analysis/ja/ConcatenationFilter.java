@@ -29,13 +29,17 @@ public abstract class ConcatenationFilter extends TokenFilter {
         if (current != null) {
             restoreState(current);
             current = null;
-            return true;
+            return processToken();
         }
 
         if (!input.incrementToken()) {
             return false;
         }
 
+        return processToken();
+    }
+
+    protected boolean processToken() throws IOException {
         if (!isTarget()) {
             return true;
         }

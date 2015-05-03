@@ -62,6 +62,12 @@ public class NumberConcatenationFilterTest extends BaseTokenStreamTestCase {
         assertAnalyzesTo(analyzer, "円 bbb", //
                 new String[] { "円", "bbb" }, //
                 new int[] { 1, 1 });
+        assertAnalyzesTo(analyzer, "1 100 円", //
+                new String[] { "1", "100円" }, //
+                new int[] { 1, 1 });
+        assertAnalyzesTo(analyzer, "1 1 にん 2 100 円 3", //
+                new String[] { "1", "1にん", "2", "100円", "3" }, //
+                new int[] { 1, 1, 1, 1, 1 });
 
     }
 
