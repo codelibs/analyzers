@@ -17,7 +17,6 @@
 package org.codelibs.analysis.ja;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +37,8 @@ public class NumberConcatenationFilterTest extends BaseTokenStreamTestCase {
         final CharArraySet words = new CharArraySet(list, false);
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new NumberConcatenationFilter(tokenizer, words));
             }
         };

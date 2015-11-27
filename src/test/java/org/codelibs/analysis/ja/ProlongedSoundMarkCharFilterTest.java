@@ -27,10 +27,12 @@ import org.junit.Test;
 
 public class ProlongedSoundMarkCharFilterTest extends BaseTokenStreamTestCase {
 
-    private TokenStream createTokeStream(final String text, String replacement) {
+    private TokenStream createTokeStream(final String text, String replacement) throws IOException {
         Reader cs = new ProlongedSoundMarkCharFilter(new StringReader(text),
                 replacement.charAt(0));
-        return new MockTokenizer(cs, MockTokenizer.WHITESPACE, false);
+        MockTokenizer tokenizer = new MockTokenizer(MockTokenizer.WHITESPACE, false);
+        tokenizer.setReader(cs);
+        return tokenizer;
     }
 
     @Test

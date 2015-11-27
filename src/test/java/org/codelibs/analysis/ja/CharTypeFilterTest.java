@@ -17,7 +17,6 @@
 package org.codelibs.analysis.ja;
 
 import java.io.IOException;
-import java.io.Reader;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
@@ -31,8 +30,8 @@ public class CharTypeFilterTest extends BaseTokenStreamTestCase {
     public void testAlphabetic() throws IOException {
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, true, false, false));
             }
         };
@@ -64,8 +63,8 @@ public class CharTypeFilterTest extends BaseTokenStreamTestCase {
     public void testDigit() throws IOException {
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, false, true, false));
             }
         };
@@ -97,8 +96,8 @@ public class CharTypeFilterTest extends BaseTokenStreamTestCase {
     public void testLetter() throws IOException {
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, false, false, true));
             }
         };
@@ -130,8 +129,8 @@ public class CharTypeFilterTest extends BaseTokenStreamTestCase {
     public void testNone() throws IOException {
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, false, false, false));
             }
         };

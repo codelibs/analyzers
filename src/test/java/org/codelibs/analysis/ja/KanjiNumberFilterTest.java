@@ -40,8 +40,8 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
     private final Analyzer analyzer = new Analyzer() {
         @Override
         protected TokenStreamComponents createComponents(
-                final String fieldName, final Reader reader) {
-            final Tokenizer tokenizer = new JapaneseTokenizer(reader, null,
+                final String fieldName) {
+            final Tokenizer tokenizer = new JapaneseTokenizer(null,
                     false, JapaneseTokenizer.Mode.SEARCH);
             return new TokenStreamComponents(tokenizer,
                     new KanjiNumberFilter(tokenizer));
@@ -203,9 +203,9 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
         final Analyzer plainAnalyzer = new Analyzer() {
             @Override
             protected TokenStreamComponents createComponents(
-                    final String fieldName, final Reader reader) {
+                    final String fieldName) {
                 final Tokenizer tokenizer = new JapaneseTokenizer(
-                        newAttributeFactory(), null, null, false,
+                        newAttributeFactory(), null, false,
                         JapaneseTokenizer.Mode.SEARCH);
                 return new TokenStreamComponents(tokenizer);
             }

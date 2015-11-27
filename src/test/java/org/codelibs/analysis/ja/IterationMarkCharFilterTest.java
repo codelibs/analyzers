@@ -27,9 +27,11 @@ import org.junit.Test;
 
 public class IterationMarkCharFilterTest extends BaseTokenStreamTestCase {
 
-    private TokenStream createTokeStream(final String text) {
+    private TokenStream createTokeStream(final String text) throws IOException {
         Reader cs = new IterationMarkCharFilter(new StringReader(text));
-        return new MockTokenizer(cs, MockTokenizer.WHITESPACE, false);
+        MockTokenizer tokenizer = new MockTokenizer(MockTokenizer.WHITESPACE, false);
+        tokenizer.setReader(cs);
+        return tokenizer;
     }
 
     @Test

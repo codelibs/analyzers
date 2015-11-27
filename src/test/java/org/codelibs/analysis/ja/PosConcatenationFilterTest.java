@@ -17,7 +17,6 @@
 package org.codelibs.analysis.ja;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,8 +32,8 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
 		final Set<String> posTags = new HashSet<>();
 		Analyzer analyzer = new Analyzer() {
 			@Override
-			protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-				final Tokenizer tokenizer = new JapaneseTokenizer(reader, null, false, JapaneseTokenizer.Mode.SEARCH);
+			protected TokenStreamComponents createComponents(final String fieldName) {
+				final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
 				return new TokenStreamComponents(tokenizer, new PosConcatnationFilter(tokenizer, posTags));
 			}
 		};
@@ -55,8 +54,8 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
 		posTags.add("名詞-サ変接続");
 		Analyzer analyzer = new Analyzer() {
 			@Override
-			protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-				final Tokenizer tokenizer = new JapaneseTokenizer(reader, null, false, JapaneseTokenizer.Mode.SEARCH);
+			protected TokenStreamComponents createComponents(final String fieldName) {
+				final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
 				return new TokenStreamComponents(tokenizer, new PosConcatnationFilter(tokenizer, posTags));
 			}
 		};

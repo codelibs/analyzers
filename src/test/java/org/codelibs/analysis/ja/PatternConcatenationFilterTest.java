@@ -17,7 +17,6 @@
 package org.codelibs.analysis.ja;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -34,8 +33,8 @@ public class PatternConcatenationFilterTest extends BaseTokenStreamTestCase {
         final Pattern pattern2 = Pattern.compile("[0-9]+年");
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new PatternConcatenationFilter(tokenizer, pattern1, pattern2));
             }
         };
