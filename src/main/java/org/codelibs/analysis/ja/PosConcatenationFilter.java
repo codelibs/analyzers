@@ -5,13 +5,13 @@ import java.util.Set;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ja.tokenattributes.PartOfSpeechAttribute;
 
-public class PosConcatnationFilter extends ConcatenationFilter {
+public class PosConcatenationFilter extends ConcatenationFilter {
 
 	private final PartOfSpeechAttribute posAtt = addAttribute(PartOfSpeechAttribute.class);
 
 	private Set<String> posTags;
 
-	protected PosConcatnationFilter(final TokenStream input, Set<String> posTags) {
+	protected PosConcatenationFilter(final TokenStream input, Set<String> posTags) {
 		super(input);
 		this.posTags = posTags;
 	}

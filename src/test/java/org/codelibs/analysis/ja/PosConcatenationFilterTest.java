@@ -34,7 +34,7 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
 			@Override
 			protected TokenStreamComponents createComponents(final String fieldName) {
 				final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
-				return new TokenStreamComponents(tokenizer, new PosConcatnationFilter(tokenizer, posTags));
+				return new TokenStreamComponents(tokenizer, new PosConcatenationFilter(tokenizer, posTags));
 			}
 		};
 
@@ -56,7 +56,7 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
 			@Override
 			protected TokenStreamComponents createComponents(final String fieldName) {
 				final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
-				return new TokenStreamComponents(tokenizer, new PosConcatnationFilter(tokenizer, posTags));
+				return new TokenStreamComponents(tokenizer, new PosConcatenationFilter(tokenizer, posTags));
 			}
 		};
 
