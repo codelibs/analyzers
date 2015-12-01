@@ -11,7 +11,7 @@ public class PosConcatenationFilter extends ConcatenationFilter {
 
 	private Set<String> posTags;
 
-	protected PosConcatenationFilter(final TokenStream input, Set<String> posTags) {
+	public PosConcatenationFilter(final TokenStream input, Set<String> posTags) {
 		super(input);
 		this.posTags = posTags;
 	}
