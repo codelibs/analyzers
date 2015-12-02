@@ -24,48 +24,63 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.ja.JapaneseTokenizer;
+import org.apache.lucene.analysis.ja.tokenattributes.PartOfSpeechAttribute;
 import org.junit.Test;
 
 public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
-	@Test
-	public void testNoPos() throws IOException {
-		final Set<String> posTags = new HashSet<>();
-		Analyzer analyzer = new Analyzer() {
-			@Override
-			protected TokenStreamComponents createComponents(final String fieldName) {
-				final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
-				return new TokenStreamComponents(tokenizer, new PosConcatenationFilter(tokenizer, posTags));
-			}
-		};
+    @Test
+    public void testNoPos() throws IOException {
+        final Set<String> posTags = new HashSet<>();
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
+                final PartOfSpeechAttribute posAtt = tokenizer.addAttribute(PartOfSpeechAttribute.class);
+                return new TokenStreamComponents(tokenizer,
+                        new PosConcatenationFilter(tokenizer, posTags, new PosConcatenationFilter.PartOfSpeechSupplier() {
+                    @Override
+                    public String get() {
+                        return posAtt.getPartOfSpeech();
+                    }
+                }));
+            }
+        };
 
-		assertAnalyzesTo(analyzer, "明日は詳細設計です。", //
-				new String[] { "明日", "は", "詳細", "設計", "です", "。" }, //
-				new int[] { 0, 2, 3, 5, 7, 9 }, //
-				new int[] { 2, 3, 5, 7, 9, 10 }, //
-				new int[] { 1, 1, 1, 1, 1, 1 });
+        assertAnalyzesTo(analyzer, "明日は詳細設計です。", //
+                new String[] { "明日", "は", "詳細", "設計", "です", "。" }, //
+                new int[] { 0, 2, 3, 5, 7, 9 }, //
+                new int[] { 2, 3, 5, 7, 9, 10 }, //
+                new int[] { 1, 1, 1, 1, 1, 1 });
 
-	}
+    }
 
-	@Test
-	public void testBasic() throws IOException {
-		final Set<String> posTags = new HashSet<>();
-		posTags.add("名詞-副詞可能");
-		posTags.add("名詞-形容動詞語幹");
-		posTags.add("名詞-サ変接続");
-		Analyzer analyzer = new Analyzer() {
-			@Override
-			protected TokenStreamComponents createComponents(final String fieldName) {
-				final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
-				return new TokenStreamComponents(tokenizer, new PosConcatenationFilter(tokenizer, posTags));
-			}
-		};
+    @Test
+    public void testBasic() throws IOException {
+        final Set<String> posTags = new HashSet<>();
+        posTags.add("名詞-副詞可能");
+        posTags.add("名詞-形容動詞語幹");
+        posTags.add("名詞-サ変接続");
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
+                final PartOfSpeechAttribute posAtt = tokenizer.addAttribute(PartOfSpeechAttribute.class);
+                return new TokenStreamComponents(tokenizer,
+                        new PosConcatenationFilter(tokenizer, posTags, new PosConcatenationFilter.PartOfSpeechSupplier() {
+                    @Override
+                    public String get() {
+                        return posAtt.getPartOfSpeech();
+                    }
+                }));
+            }
+        };
 
-		assertAnalyzesTo(analyzer, "明日は詳細設計です。", //
-				new String[] { "明日", "は", "詳細設計", "です", "。" }, //
-				new int[] { 0, 2, 3, 7, 9 }, //
-				new int[] { 2, 3, 7, 9, 10 }, //
-				new int[] { 1, 1, 1, 1, 1 });
+        assertAnalyzesTo(analyzer, "明日は詳細設計です。", //
+                new String[] { "明日", "は", "詳細設計", "です", "。" }, //
+                new int[] { 0, 2, 3, 7, 9 }, //
+                new int[] { 2, 3, 7, 9, 10 }, //
+                new int[] { 1, 1, 1, 1, 1 });
 
-	}
+    }
 
 }
