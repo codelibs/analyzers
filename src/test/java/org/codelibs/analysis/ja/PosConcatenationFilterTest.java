@@ -60,6 +60,8 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
         posTags.add("名詞-副詞可能");
         posTags.add("名詞-形容動詞語幹");
         posTags.add("名詞-サ変接続");
+        posTags.add("名詞-一般");
+        posTags.add("名詞-接尾-一般");
         Analyzer analyzer = new Analyzer() {
             @Override
             protected TokenStreamComponents createComponents(final String fieldName) {
@@ -75,12 +77,17 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
             }
         };
 
+        assertAnalyzesTo(analyzer, "歯科医院の歯科衛生士", //
+                new String[] { "歯科医院", "の", "歯科衛生士" }, //
+                new int[] { 0, 4, 5 }, //
+                new int[] { 4, 5, 10 }, //
+                new int[] { 1, 1, 1 });
+
         assertAnalyzesTo(analyzer, "明日は詳細設計です。", //
                 new String[] { "明日", "は", "詳細設計", "です", "。" }, //
                 new int[] { 0, 2, 3, 7, 9 }, //
                 new int[] { 2, 3, 7, 9, 10 }, //
                 new int[] { 1, 1, 1, 1, 1 });
-
     }
 
 }

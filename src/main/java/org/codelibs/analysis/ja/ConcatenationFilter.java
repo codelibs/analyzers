@@ -48,6 +48,7 @@ public abstract class ConcatenationFilter extends TokenFilter {
         if (input.incrementToken()) {
             if (isConcatenated()) {
                 concatenateTerms(previousState);
+                return processToken();
             } else {
                 current = captureState();
                 restoreState(previousState);
