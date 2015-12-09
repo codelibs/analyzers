@@ -17,41 +17,36 @@
 package org.codelibs.analysis.ja;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.util.CharArraySet;
 import org.junit.Test;
 
-public class RemoveWordFilterTest extends BaseTokenStreamTestCase {
+public class StopTokenPrefixFilterTest extends BaseTokenStreamTestCase {
 
     @Test
     public void testBasic() throws IOException {
-        List<String> list = new ArrayList<>();
-        list.add("bbb");
-        list.add("ddd");
-        final CharArraySet words = new CharArraySet(list, false);
         Analyzer analyzer = new Analyzer() {
             @Override
             protected TokenStreamComponents createComponents(final String fieldName) {
                 final Tokenizer tokenizer = new WhitespaceTokenizer();
-                return new TokenStreamComponents(tokenizer, new RemoveWordFilter(tokenizer, words));
+                return new TokenStreamComponents(tokenizer, new StopTokenPrefixFilter(tokenizer, new String[] { "b", "dd" }, false));
             }
         };
 
         assertAnalyzesTo(analyzer, "aaa bbb ccc ddd eee", //
                 new String[] { "aaa", "ccc", "eee" }, //
-                new int[] { 0, 8, 16 },//
-                new int[] { 3, 11, 19 },//
+                new int[] { 0, 8, 16 }, //
+                new int[] { 3, 11, 19 }, //
                 new int[] { 1, 2, 2 });
-        assertAnalyzesTo(analyzer, "aaa", //
-                new String[] { "aaa" });
-        assertAnalyzesTo(analyzer, "bbb", //
-                new String[0]);
+        assertAnalyzesTo(analyzer, "aaa", new String[] { "aaa" });
+        assertAnalyzesTo(analyzer, "ddd", new String[0]);
+        assertAnalyzesTo(analyzer, "add", new String[] { "add" });
+        assertAnalyzesTo(analyzer, "aad", new String[] { "aad" });
+        assertAnalyzesTo(analyzer, "dda", new String[0]);
+        assertAnalyzesTo(analyzer, "daa", new String[] { "daa" });
 
     }
 
