@@ -18,7 +18,6 @@ package org.codelibs.analysis.ja;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,8 +38,8 @@ public class ReloadableKeywordMarkerFilterTest extends BaseTokenStreamTestCase {
 
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
                 return new TokenStreamComponents(tokenizer, new ReloadableKeywordMarkerFilter(tokenizer, dictPath, reloadInterval));
             }
         };
