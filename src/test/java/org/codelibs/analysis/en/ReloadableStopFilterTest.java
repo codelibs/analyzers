@@ -40,7 +40,7 @@ public class ReloadableStopFilterTest extends BaseTokenStreamTestCase {
             @Override
             protected TokenStreamComponents createComponents(final String fieldName) {
                 final Tokenizer tokenizer = new WhitespaceTokenizer();
-                return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, reloadInterval));
+                return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, true, reloadInterval));
             }
         };
 
