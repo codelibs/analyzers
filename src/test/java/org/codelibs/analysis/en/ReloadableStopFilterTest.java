@@ -18,6 +18,7 @@ package org.codelibs.analysis.en;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,8 +39,8 @@ public class ReloadableStopFilterTest extends BaseTokenStreamTestCase {
 
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer();
+            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, reloadInterval));
             }
         };
