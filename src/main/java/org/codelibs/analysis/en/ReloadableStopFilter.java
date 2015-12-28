@@ -14,6 +14,8 @@ import org.apache.lucene.analysis.util.WordlistLoader;
 
 public class ReloadableStopFilter extends FilteringTokenFilter {
 
+    private static final int INITIAL_CAPACITY = 16;
+
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
     private CharArraySet stopWords;
@@ -24,11 +26,14 @@ public class ReloadableStopFilter extends FilteringTokenFilter {
 
     private long expiry;
 
+    private boolean ignoreCase;
+
     private long lastModifed;
 
-    public ReloadableStopFilter(TokenStream in, Path stopwordPath, long reloadInterval) {
+    public ReloadableStopFilter(TokenStream in, Path stopwordPath, boolean ignoreCase, long reloadInterval) {
         super(in);
         this.stopWordPath = stopwordPath;
+        this.ignoreCase = ignoreCase;
         this.reloadInterval = reloadInterval;
 
         loadStopWordSet();
@@ -53,7 +58,7 @@ public class ReloadableStopFilter extends FilteringTokenFilter {
 
     private void loadStopWordSet() {
         try (BufferedReader reader = Files.newBufferedReader(stopWordPath, Charset.forName("UTF-8"))) {
-            stopWords = WordlistLoader.getWordSet(reader);
+            stopWords = WordlistLoader.getWordSet(reader, new CharArraySet(INITIAL_CAPACITY, ignoreCase));
             lastModifed = Files.getLastModifiedTime(stopWordPath).toMillis();
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to read " + stopWordPath, e);
