@@ -14,11 +14,10 @@
  * governing permissions and limitations under the License.
  */
 
-package org.codelibs.analysis.ja;
+package org.codelibs.analysis.en;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,31 +28,30 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.junit.Test;
 
-public class ReloadableKeywordMarkerFilterTest extends BaseTokenStreamTestCase {
+public class ReloadableStopFilterTest extends BaseTokenStreamTestCase {
 
     @Test
     public void testBasic() throws Exception {
-        final Path dictPath = Files.createTempFile("rkmf_", ".txt");
-        final long reloadInterval = 1000;
+        final Path dictPath = Files.createTempFile("rsf_", ".txt");
+        final long reloadInterval = 500;
         writeFile(dictPath, "aaa");
 
         Analyzer analyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-                final Tokenizer tokenizer = new WhitespaceTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new ReloadableKeywordMarkerFilter(tokenizer, dictPath, reloadInterval));
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, reloadInterval));
             }
         };
 
         String input = "aaa bbb";
-        assertTokenStreamContents(analyzer.tokenStream("dummy", input), new String[] { "aaa", "bbb" }, new int[] { 0, 4 },
-                new int[] { 3, 7 }, null, null, null, input.length(), new boolean[] { true, false }, true);
+        assertAnalyzesTo(analyzer, input, new String[] { "bbb" });
 
+        Thread.sleep(1000L);
         writeFile(dictPath, "bbb");
-        Thread.sleep(1100L);
+        Thread.sleep(1000L);
 
-        assertTokenStreamContents(analyzer.tokenStream("dummy", input), new String[] { "aaa", "bbb" }, new int[] { 0, 4 },
-                new int[] { 3, 7 }, null, null, null, input.length(), new boolean[] { false, true }, true);
+        assertAnalyzesTo(analyzer, input, new String[] { "aaa" });
 
     }
 

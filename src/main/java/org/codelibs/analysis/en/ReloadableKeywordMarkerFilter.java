@@ -1,4 +1,4 @@
-package org.codelibs.analysis.ja;
+package org.codelibs.analysis.en;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class ReloadableKeywordMarkerFilter extends KeywordMarkerFilter {
 
     @Override
     public void reset() throws IOException {
-        if (expiry > System.currentTimeMillis()) {
+        if (expiry < System.currentTimeMillis()) {
             if (Files.getLastModifiedTime(keywordPath).toMillis() > lastModifed) {
                 loadKeywordSet();
             }
@@ -52,7 +52,7 @@ public class ReloadableKeywordMarkerFilter extends KeywordMarkerFilter {
     }
 
     private void loadKeywordSet() {
-        try (BufferedReader reader = Files.newBufferedReader(keywordPath, Charset.forName("UTF-8"));) {
+        try (BufferedReader reader = Files.newBufferedReader(keywordPath, Charset.forName("UTF-8"))) {
             keywordSet = WordlistLoader.getWordSet(reader);
             lastModifed = Files.getLastModifiedTime(keywordPath).toMillis();
         } catch (Exception e) {
