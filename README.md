@@ -19,7 +19,7 @@ Put the following dependency into pom.xml:
     <dependency>
       <groupId>org.codelibs</groupId>
       <artifactId>analyzers-ja</artifactId>
-      <version>5.3.1.0</version>
+      <version>5.3.1.1</version>
     </dependency>
 
 
