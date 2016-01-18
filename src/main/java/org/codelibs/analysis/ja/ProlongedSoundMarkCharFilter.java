@@ -3,6 +3,8 @@ package org.codelibs.analysis.ja;
 import java.io.Reader;
 import java.lang.Character.UnicodeBlock;
 
+import org.codelibs.analysis.BufferedCharFilter;
+
 public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
 
     private static final char U002D = '\u002d'; // HYPHEN-MINUS
@@ -39,7 +41,7 @@ public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
     }
 
     @Override
-    CharSequence processInput(final CharSequence input) {
+    protected CharSequence processInput(final CharSequence input) {
         final StringBuilder buf = new StringBuilder(input.length());
         char prev = 0;
         for (int pos = 0; pos < input.length(); pos++) {

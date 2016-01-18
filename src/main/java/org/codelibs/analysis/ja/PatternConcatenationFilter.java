@@ -3,6 +3,7 @@ package org.codelibs.analysis.ja;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.TokenStream;
+import org.codelibs.analysis.ConcatenationFilter;
 
 public class PatternConcatenationFilter extends ConcatenationFilter {
 

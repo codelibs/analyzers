@@ -3,6 +3,8 @@ package org.codelibs.analysis.ja;
 import java.io.Reader;
 import java.lang.Character.UnicodeBlock;
 
+import org.codelibs.analysis.BufferedCharFilter;
+
 // http://ja.wikipedia.org/wiki/%E8%B8%8A%E3%82%8A%E5%AD%97
 public class IterationMarkCharFilter extends BufferedCharFilter {
     private static final String UNVOICED_CONSONANT_HIRAGANA = "かきくけこさしすせそたちつてとはひふへほはひふへほ";
@@ -30,7 +32,7 @@ public class IterationMarkCharFilter extends BufferedCharFilter {
     }
 
     @Override
-    CharSequence processInput(final CharSequence input) {
+    protected CharSequence processInput(final CharSequence input) {
         final StringBuilder buf = new StringBuilder(input.length());
         int pos = 0;
         while (pos < input.length()) {

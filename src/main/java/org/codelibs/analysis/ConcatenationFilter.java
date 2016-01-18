@@ -1,4 +1,4 @@
-package org.codelibs.analysis.ja;
+package org.codelibs.analysis;
 
 import java.io.IOException;
 

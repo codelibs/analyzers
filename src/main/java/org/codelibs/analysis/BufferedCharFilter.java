@@ -1,4 +1,4 @@
-package org.codelibs.analysis.ja;
+package org.codelibs.analysis;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,5 +33,5 @@ public abstract class BufferedCharFilter extends BaseCharFilter {
         bufferedInput = new StringReader(processInput(buffered).toString());
     }
 
-    abstract CharSequence processInput(CharSequence input);
+    protected abstract CharSequence processInput(CharSequence input);
 }

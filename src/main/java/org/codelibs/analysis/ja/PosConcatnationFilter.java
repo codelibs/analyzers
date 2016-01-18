@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.ja.tokenattributes.PartOfSpeechAttribute;
+import org.codelibs.analysis.ConcatenationFilter;
 
 public class PosConcatnationFilter extends ConcatenationFilter {
 
