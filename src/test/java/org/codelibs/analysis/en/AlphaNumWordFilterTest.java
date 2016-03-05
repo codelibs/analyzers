@@ -170,6 +170,62 @@ public class AlphaNumWordFilterTest extends BaseTokenStreamTestCase {
                 new int[] { 1 } // posIncrements
         );
 
+        input = "1234567890 abcdefg";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "1234567890", " ", "abcdefg" }, // output
+                new int[] { 0, 10, 11 }, // startOffsets
+                new int[] { 10, 11, 18 }, //endOffsets
+                new String[] { TOKEN_TYPES[NUM], "word", TOKEN_TYPES[ALPHANUM] }, //types
+                new int[] { 1, 1, 1 } // posIncrements
+        );
     }
 
+    @Test
+    public void testMaxLength() throws Exception {
+        Analyzer analyzer;
+        String input;
+
+        analyzer = createAnalzyer(3);
+        input = "1234567890 abcdefg";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "123", " ", "abc" }, // output
+                new int[] { 0, 10, 11 }, // startOffsets
+                new int[] { 10, 11, 18 }, //endOffsets
+                new String[] { TOKEN_TYPES[NUM], "word", TOKEN_TYPES[ALPHANUM] }, //types
+                new int[] { 1, 1, 1 } // posIncrements
+        );
+
+        analyzer = createAnalzyer(5);
+        input = "1234567890 abcdefg";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "12345", " ", "abcde" }, // output
+                new int[] { 0, 10, 11 }, // startOffsets
+                new int[] { 10, 11, 18 }, //endOffsets
+                new String[] { TOKEN_TYPES[NUM], "word", TOKEN_TYPES[ALPHANUM] }, //types
+                new int[] { 1, 1, 1 } // posIncrements
+        );
+
+        analyzer = createAnalzyer(10);
+        input = "1234567890 abcdefg";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "1234567890", " ", "abcdefg" }, // output
+                new int[] { 0, 10, 11 }, // startOffsets
+                new int[] { 10, 11, 18 }, //endOffsets
+                new String[] { TOKEN_TYPES[NUM], "word", TOKEN_TYPES[ALPHANUM] }, //types
+                new int[] { 1, 1, 1 } // posIncrements
+        );
+    }
+
+    private Analyzer createAnalzyer(final int length) {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new NGramTokenizer(1, 1);
+                final AlphaNumWordFilter filter = new AlphaNumWordFilter(tokenizer);
+                filter.setMaxTokenLength(length);
+                return new TokenStreamComponents(tokenizer, filter);
+            }
+        };
+        return analyzer;
+    }
 }

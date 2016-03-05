@@ -34,6 +34,10 @@ import org.apache.lucene.util.AttributeSource;
 
 public class AlphaNumWordFilter extends TokenFilter {
 
+    public static final int MAX_TOKEN_LENGTH_LIMIT = 1024 * 1024;
+
+    public static final int DEFAULT_MAX_TOKEN_LENGTH = 255;
+
     public static final int ALPHANUM = 0;
 
     public static final int NUM = 6;
@@ -45,6 +49,8 @@ public class AlphaNumWordFilter extends TokenFilter {
     private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
     protected AttributeSource.State current;
+
+    protected int maxTokenLength = DEFAULT_MAX_TOKEN_LENGTH;
 
     public AlphaNumWordFilter(final TokenStream input) {
         super(input);
@@ -106,7 +112,9 @@ public class AlphaNumWordFilter extends TokenFilter {
 
         restoreState(previousState);
 
-        termAtt.append(term);
+        if (termAtt.length() < maxTokenLength) {
+            termAtt.append(term);
+        }
         offsetAtt.setOffset(offsetAtt.startOffset(), endOffset);
         final String type1 = getType();
         if (TOKEN_TYPES[NUM].equals(type1) && TOKEN_TYPES[ALPHANUM].equals(type2)) {
@@ -162,5 +170,20 @@ public class AlphaNumWordFilter extends TokenFilter {
             return TOKEN_TYPES[NUM];
         }
         return DEFAULT_TYPE;
+    }
+
+    public void setMaxTokenLength(int length) {
+        if (length < 1) {
+            throw new IllegalArgumentException("maxTokenLength must be greater than zero");
+        } else if (length > MAX_TOKEN_LENGTH_LIMIT) {
+            throw new IllegalArgumentException("maxTokenLength may not exceed " + MAX_TOKEN_LENGTH_LIMIT);
+        }
+        if (length != maxTokenLength) {
+            maxTokenLength = length;
+        }
+    }
+
+    public int getMaxTokenLength() {
+        return maxTokenLength;
     }
 }
