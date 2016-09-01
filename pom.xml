@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs</groupId>
 	<artifactId>analyzers-ja</artifactId>
-	<version>5.5.0.1-SNAPSHOT</version>
+	<version>5.5.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>This library provides Lucene's analyzers for Japanese.</description>
 	<inceptionYear>2011</inceptionYear>
@@ -27,7 +27,7 @@
 		<version>9</version>
 	</parent>
 	<properties>
-		<lucene.version>5.5.0</lucene.version>
+		<lucene.version>5.5.2</lucene.version>
 	</properties>
 	<build>
 		<plugins>
@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>org.dbflute.utflute</groupId>
 			<artifactId>utflute-core</artifactId>
-			<version>0.5.0</version>
+			<version>0.6.1A</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
