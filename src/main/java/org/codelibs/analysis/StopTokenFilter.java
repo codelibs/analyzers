@@ -18,9 +18,9 @@ package org.codelibs.analysis;
 import java.io.IOException;
 import java.util.Locale;
 
+import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.util.FilteringTokenFilter;
 
 public abstract class StopTokenFilter extends FilteringTokenFilter {
 

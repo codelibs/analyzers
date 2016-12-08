@@ -15,8 +15,8 @@
  */
 package org.codelibs.analysis.ja;
 
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.util.CharArraySet;
 import org.codelibs.analysis.ConcatenationFilter;
 
 public class NumberConcatenationFilter extends ConcatenationFilter {

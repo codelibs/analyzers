@@ -21,11 +21,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.util.CharArraySet;
-import org.apache.lucene.analysis.util.FilteringTokenFilter;
-import org.apache.lucene.analysis.util.WordlistLoader;
 
 public class ReloadableStopFilter extends FilteringTokenFilter {
 
