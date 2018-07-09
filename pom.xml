@@ -3,12 +3,12 @@
 	<name>Lucene Analyzers for Japanese</name>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs</groupId>
-	<artifactId>analyzers-ja</artifactId>
+	<artifactId>analyzers</artifactId>
 	<version>7.3.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description>This library provides Lucene's analyzers for Japanese.</description>
 	<inceptionYear>2011</inceptionYear>
-	<url>https://github.com/codelibs/analyzers-ja</url>
+	<url>https://github.com/codelibs/analyzers</url>
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -17,9 +17,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:codelibs/analyzers-ja.git</connection>
-		<developerConnection>scm:git:git@github.com:codelibs/analyzers-ja.git</developerConnection>
-		<url>git@github.com:codelibs/analyzers-ja.git</url>
+		<connection>scm:git:git@github.com:codelibs/analyzers.git</connection>
+		<developerConnection>scm:git:git@github.com:codelibs/analyzers.git</developerConnection>
+		<url>git@github.com:codelibs/analyzers.git</url>
 	</scm>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>

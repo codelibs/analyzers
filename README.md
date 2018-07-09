@@ -1,14 +1,17 @@
-Lucene Analyzers for Japanese
+Lucene Analyzers
 =======================
 
 ## Overview
 
-This library provides Lucene's analyzers for Japanese.
+This library provides Lucene's analyzers.
+
+## Version
+
+[Versions in Maven Repository](http://central.maven.org/maven2/org/codelibs/analyzers/)
 
 ### Issues/Questions
 
-Please file an [issue](https://github.com/codelibs/analyzers-ja/issues "issue").
-(Japanese forum is [here](https://github.com/codelibs/codelibs-ja-forum "here").)
+Please file an [issue](https://github.com/codelibs/analyzers/issues "issue").
 
 ## Installation
 
@@ -19,7 +22,7 @@ Put the following dependency into pom.xml:
     <dependency>
       <groupId>org.codelibs</groupId>
       <artifactId>analyzers-ja</artifactId>
-      <version>6.2.1.0</version>
+      <version>7.3.1.1</version>
     </dependency>
 
 
