@@ -20,6 +20,7 @@ import static org.apache.lucene.analysis.standard.StandardTokenizer.HANGUL;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.HIRAGANA;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.IDEOGRAPHIC;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.KATAKANA;
+import static org.apache.lucene.analysis.standard.StandardTokenizer.SOUTHEAST_ASIAN;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.TOKEN_TYPES;
 import static org.apache.lucene.analysis.tokenattributes.TypeAttribute.DEFAULT_TYPE;
 import static org.codelibs.analysis.en.AlphaNumWordFilter.ALPHANUM;
@@ -43,6 +44,16 @@ public class AlphaNumWordFilterTest extends BaseTokenStreamTestCase {
             }
         };
         String input;
+
+        input = "สายพาน";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "ส", "า", "ย", "พ", "า", "น" }, // output
+                new int[] { 0, 1, 2, 3, 4, 5 }, // startOffsets
+                new int[] { 1, 2, 3, 4, 5, 6 }, //endOffsets
+                new String[] { TOKEN_TYPES[SOUTHEAST_ASIAN], TOKEN_TYPES[SOUTHEAST_ASIAN], TOKEN_TYPES[SOUTHEAST_ASIAN],
+                        TOKEN_TYPES[SOUTHEAST_ASIAN], TOKEN_TYPES[SOUTHEAST_ASIAN], TOKEN_TYPES[SOUTHEAST_ASIAN] }, //types
+                new int[] { 1, 1, 1, 1, 1, 1 } // posIncrements
+        );
 
         input = "レッド";
         assertAnalyzesTo(analyzer, input, //
