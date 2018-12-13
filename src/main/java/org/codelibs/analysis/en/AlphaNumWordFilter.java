@@ -19,6 +19,7 @@ import static org.apache.lucene.analysis.standard.StandardTokenizer.HANGUL;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.HIRAGANA;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.IDEOGRAPHIC;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.KATAKANA;
+import static org.apache.lucene.analysis.standard.StandardTokenizer.SOUTHEAST_ASIAN;
 import static org.apache.lucene.analysis.standard.StandardTokenizer.TOKEN_TYPES;
 import static org.apache.lucene.analysis.tokenattributes.TypeAttribute.DEFAULT_TYPE;
 
@@ -164,6 +165,17 @@ public class AlphaNumWordFilter extends TokenFilter {
                 || UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D.equals(block) //
         ) {
             return TOKEN_TYPES[IDEOGRAPHIC];
+        } else if (UnicodeBlock.THAI.equals(block) //
+                || UnicodeBlock.LAO.equals(block) //
+                || UnicodeBlock.MYANMAR.equals(block) //
+                || UnicodeBlock.KHMER.equals(block) //
+                || UnicodeBlock.TAI_LE.equals(block) //
+                || UnicodeBlock.NEW_TAI_LUE.equals(block) //
+                || UnicodeBlock.TAI_THAM.equals(block) //
+                || UnicodeBlock.MYANMAR_EXTENDED_A.equals(block) //
+                || UnicodeBlock.TAI_VIET.equals(block) //
+        ) {
+            return TOKEN_TYPES[SOUTHEAST_ASIAN];
         } else if (Character.isAlphabetic(c)) {
             return TOKEN_TYPES[ALPHANUM];
         } else if (Character.isDigit(c)) {
