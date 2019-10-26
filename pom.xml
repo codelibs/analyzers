@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.codelibs</groupId>
 	<artifactId>analyzers</artifactId>
-	<version>8.2.0.1-SNAPSHOT</version>
+	<version>8.2.0.1</version>
 	<packaging>jar</packaging>
 	<description>This library provides Lucene's analyzers for Japanese.</description>
 	<inceptionYear>2011</inceptionYear>
