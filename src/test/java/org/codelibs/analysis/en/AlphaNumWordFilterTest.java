@@ -55,6 +55,15 @@ public class AlphaNumWordFilterTest extends BaseTokenStreamTestCase {
                 new int[] { 1, 1, 1, 1, 1, 1 } // posIncrements
         );
 
+        input = "C++";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "C", "+", "+" }, // output
+                new int[] { 0, 1, 2 }, // startOffsets
+                new int[] { 1, 2, 3 }, //endOffsets
+                new String[] { TOKEN_TYPES[ALPHANUM], DEFAULT_TYPE, DEFAULT_TYPE }, //types
+                new int[] { 1, 1, 1 } // posIncrements
+        );
+
         input = "レッド";
         assertAnalyzesTo(analyzer, input, //
                 new String[] { "レ", "ッ", "ド" }, // output
