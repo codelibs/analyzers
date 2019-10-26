@@ -41,7 +41,7 @@ public class AlphaNumWordFilter extends TokenFilter {
 
     public static final int ALPHANUM = 0;
 
-    public static final int NUM = 6;
+    public static final int NUM = 1;
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
