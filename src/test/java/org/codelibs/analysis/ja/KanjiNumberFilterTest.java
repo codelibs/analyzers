@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2014 the CodeLibs Project and the Others.
+ * Copyright 2012-2022 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 package org.codelibs.analysis.ja;
 
 //https://issues.apache.org/jira/browse/LUCENE-3922
@@ -39,31 +38,23 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
 
     private final Analyzer analyzer = new Analyzer() {
         @Override
-        protected TokenStreamComponents createComponents(
-                final String fieldName) {
-            final Tokenizer tokenizer = new JapaneseTokenizer(null,
-                    false, JapaneseTokenizer.Mode.SEARCH);
-            return new TokenStreamComponents(tokenizer,
-                    new KanjiNumberFilter(tokenizer));
+        protected TokenStreamComponents createComponents(final String fieldName) {
+            final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
+            return new TokenStreamComponents(tokenizer, new KanjiNumberFilter(tokenizer));
         }
     };
 
     @Test
     public void testBasics() throws IOException {
 
-        assertAnalyzesTo(analyzer, "本日十万二千五百円のワインを買った", new String[] { "本日",
-                "102500", "円", "の", "ワイン", "を", "買っ", "た" }, new int[] { 0, 2,
-                8, 9, 10, 13, 14, 16 },
-                new int[] { 2, 8, 9, 10, 13, 14, 16, 17 });
+        assertAnalyzesTo(analyzer, "本日十万二千五百円のワインを買った", new String[] { "本日", "102500", "円", "の", "ワイン", "を", "買っ", "た" },
+                new int[] { 0, 2, 8, 9, 10, 13, 14, 16 }, new int[] { 2, 8, 9, 10, 13, 14, 16, 17 });
 
-        assertAnalyzesTo(analyzer, "昨日のお寿司は１０万円でした。", new String[] { "昨日", "の",
-                "お", "寿司", "は", "100000", "円", "でし", "た", "。" }, new int[] { 0, 2,
-                3, 4, 6, 7, 10, 11, 13, 14 }, new int[] { 2, 3, 4, 6, 7, 10, 11,
-                13, 14, 15 });
+        assertAnalyzesTo(analyzer, "昨日のお寿司は１０万円でした。", new String[] { "昨日", "の", "お", "寿司", "は", "100000", "円", "でし", "た", "。" },
+                new int[] { 0, 2, 3, 4, 6, 7, 10, 11, 13, 14 }, new int[] { 2, 3, 4, 6, 7, 10, 11, 13, 14, 15 });
 
-        assertAnalyzesTo(analyzer, "アティリカの資本金は６００万円です", new String[] { "アティリカ",
-                "の", "資本", "金", "は", "6000000", "円", "です" }, new int[] { 0, 5,
-                6, 8, 9, 10, 14, 15 }, new int[] { 5, 6, 8, 9, 10, 14, 15, 17 });
+        assertAnalyzesTo(analyzer, "アティリカの資本金は６００万円です", new String[] { "アティリカ", "の", "資本", "金", "は", "6000000", "円", "です" },
+                new int[] { 0, 5, 6, 8, 9, 10, 14, 15 }, new int[] { 5, 6, 8, 9, 10, 14, 15, 17 });
     }
 
     @Test
@@ -96,12 +87,10 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
         assertAnalyzesTo(analyzer, "三五七八九", new String[] { "35789" });
         assertAnalyzesTo(analyzer, "六百二万五千一", new String[] { "6025001" });
         assertAnalyzesTo(analyzer, "兆六百万五千一", new String[] { "1000006005001" });
-        assertAnalyzesTo(analyzer, "十兆六百万五千一",
-                new String[] { "10000006005001" });
+        assertAnalyzesTo(analyzer, "十兆六百万五千一", new String[] { "10000006005001" });
         assertAnalyzesTo(analyzer, "一京一", new String[] { "10000000000000001" });
         assertAnalyzesTo(analyzer, "十京十", new String[] { "100000000000000010" });
-        assertAnalyzesTo(analyzer, "垓京兆億万千百十一",
-                new String[] { "100010001000100011111" });
+        assertAnalyzesTo(analyzer, "垓京兆億万千百十一", new String[] { "100010001000100011111" });
     }
 
     @Test
@@ -117,20 +106,18 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
         assertAnalyzesTo(analyzer, "二", new String[] { "2" });
         assertAnalyzesTo(analyzer, "二人", new String[] { "2", "人" });
         assertAnalyzesTo(analyzer, "二人三", new String[] { "2", "人", "3" });
-        // Stacked tokens - emit tokens as they are
-//        assertAnalyzesTo(analyzer, "二人三脚", new String[] { "2", "二人三脚", "人",
-//                "三", "脚" });
-        assertAnalyzesTo(analyzer, "二人三脚", new String[] { "2", "人",
-                "3", "脚" });
+        // Stacked tokens - emit tokens as they are (Lucene 8)
+        //        assertAnalyzesTo(analyzer, "二人三脚", new String[] { "2", "二人三脚", "人",
+        //                "三", "脚" });
+        assertAnalyzesTo(analyzer, "二人三脚", new String[] { "2", "人", "3", "脚" });
     }
 
     @Test
     public void testFujiyaichinisanu() throws IOException {
-        // Stacked tokens with a numeral partial
-//        assertAnalyzesTo(analyzer, "不二家一二三", new String[] { "不", "不二家", "二",
-//                "家", "123" });
-        assertAnalyzesTo(analyzer, "不二家一二三", new String[] { "不", "2",
-                "家", "123" });
+        // Stacked tokens with a numeral partial (Lucene 8)
+        //        assertAnalyzesTo(analyzer, "不二家一二三", new String[] { "不", "不二家", "二",
+        //                "家", "123" });
+        assertAnalyzesTo(analyzer, "不二家一二三", new String[] { "不", "2", "家", "123" });
     }
 
     @Test
@@ -144,8 +131,7 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
     @Test
     public void testKanjiArabic() throws IOException {
         // Test kanji numerals used as Arabic numbers (with head zero)
-        assertAnalyzesTo(analyzer, "〇一二三四五六七八九九八七六五四三二一〇",
-                new String[] { "1234567899876543210" });
+        assertAnalyzesTo(analyzer, "〇一二三四五六七八九九八七六五四三二一〇", new String[] { "1234567899876543210" });
 
         // I'm Bond, James "normalized" Bond...
         assertAnalyzesTo(analyzer, "〇〇七", new String[] { "7" });
@@ -153,15 +139,13 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
 
     @Test
     public void testDoubleZero() throws IOException {
-        assertAnalyzesTo(analyzer, "〇〇", new String[] { "0" }, new int[] { 0 },
-                new int[] { 2 }, new int[] { 1 });
+        assertAnalyzesTo(analyzer, "〇〇", new String[] { "0" }, new int[] { 0 }, new int[] { 2 }, new int[] { 1 });
     }
 
     @Test
     public void testNames() throws IOException {
         // Test name that normalises to number
-        assertAnalyzesTo(analyzer, "田中京一", new String[] { "田中",
-                "10000000000000001" }, // 京一 is normalized to a number a number
+        assertAnalyzesTo(analyzer, "田中京一", new String[] { "田中", "10000000000000001" }, // 京一 is normalized to a number a number
                 new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 });
     }
 
@@ -193,8 +177,7 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
 
     @Test
     public void testFunnyIssue() throws Exception {
-        BaseTokenStreamTestCase.checkAnalysisConsistency(random(), analyzer,
-                true, "〇〇\u302f\u3029\u3039\u3023\u3033\u302bB", true);
+        BaseTokenStreamTestCase.checkAnalysisConsistency(random(), analyzer, true, "〇〇\u302f\u3029\u3039\u3023\u3033\u302bB", true);
     }
 
     @Ignore("Used for detailed testing")
@@ -206,31 +189,23 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
 
         final Analyzer plainAnalyzer = new Analyzer() {
             @Override
-            protected TokenStreamComponents createComponents(
-                    final String fieldName) {
-                final Tokenizer tokenizer = new JapaneseTokenizer(
-                        newAttributeFactory(), null, false,
-                        JapaneseTokenizer.Mode.SEARCH);
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new JapaneseTokenizer(newAttributeFactory(), null, false, JapaneseTokenizer.Mode.SEARCH);
                 return new TokenStreamComponents(tokenizer);
             }
         };
 
-        analyze(plainAnalyzer,
-                new BufferedReader(new FileReader(inputFilename)),
-                new BufferedWriter(new FileWriter(tokenizedOutput)));
+        analyze(plainAnalyzer, new BufferedReader(new FileReader(inputFilename)), new BufferedWriter(new FileWriter(tokenizedOutput)));
 
-        analyze(analyzer, new BufferedReader(new FileReader(inputFilename)),
-                new BufferedWriter(new FileWriter(normalizedOutput)));
+        analyze(analyzer, new BufferedReader(new FileReader(inputFilename)), new BufferedWriter(new FileWriter(normalizedOutput)));
     }
 
-    public void analyze(final Analyzer analyzer, final Reader reader,
-            final Writer writer) throws IOException {
+    public void analyze(final Analyzer analyzer, final Reader reader, final Writer writer) throws IOException {
         final TokenStream stream = analyzer.tokenStream("dummy", reader);
 
         stream.reset();
 
-        final CharTermAttribute termAttr = stream
-                .addAttribute(CharTermAttribute.class);
+        final CharTermAttribute termAttr = stream.addAttribute(CharTermAttribute.class);
 
         while (stream.incrementToken()) {
             writer.write(termAttr.toString());

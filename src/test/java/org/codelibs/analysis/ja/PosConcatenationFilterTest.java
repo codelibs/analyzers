@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 the CodeLibs Project and the Others.
+ * Copyright 2012-2022 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 package org.codelibs.analysis.ja;
 
 import java.io.IOException;
@@ -38,11 +37,11 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
                 final PartOfSpeechAttribute posAtt = tokenizer.addAttribute(PartOfSpeechAttribute.class);
                 return new TokenStreamComponents(tokenizer,
                         new PosConcatenationFilter(tokenizer, posTags, new PosConcatenationFilter.PartOfSpeechSupplier() {
-                    @Override
-                    public String get() {
-                        return posAtt.getPartOfSpeech();
-                    }
-                }));
+                            @Override
+                            public String get() {
+                                return posAtt.getPartOfSpeech();
+                            }
+                        }));
             }
         };
 
@@ -69,11 +68,11 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
                 final PartOfSpeechAttribute posAtt = tokenizer.addAttribute(PartOfSpeechAttribute.class);
                 return new TokenStreamComponents(tokenizer,
                         new PosConcatenationFilter(tokenizer, posTags, new PosConcatenationFilter.PartOfSpeechSupplier() {
-                    @Override
-                    public String get() {
-                        return posAtt.getPartOfSpeech();
-                    }
-                }));
+                            @Override
+                            public String get() {
+                                return posAtt.getPartOfSpeech();
+                            }
+                        }));
             }
         };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 the CodeLibs Project and the Others.
+ * Copyright 2012-2022 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,8 +75,7 @@ public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
             case U30FC:
                 if (prev != 0) {
                     final UnicodeBlock block = UnicodeBlock.of(prev);
-                    if (block == UnicodeBlock.HIRAGANA
-                            || block == UnicodeBlock.KATAKANA
+                    if (block == UnicodeBlock.HIRAGANA || block == UnicodeBlock.KATAKANA
                             || block == UnicodeBlock.KATAKANA_PHONETIC_EXTENSIONS) {
                         buf.append(replacement);
                     } else {

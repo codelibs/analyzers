@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2016 the CodeLibs Project and the Others.
+ * Copyright 2012-2022 CodeLibs Project and the Others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,8 +188,7 @@ public class KanjiNumberFilter extends TokenFilter {
      */
     public String normalizeNumber(final String number) {
         try {
-            final BigDecimal normalizedNumber = parseNumber(new NumberBuffer(
-                    number));
+            final BigDecimal normalizedNumber = parseNumber(new NumberBuffer(number));
             if (normalizedNumber == null) {
                 return number;
             }
