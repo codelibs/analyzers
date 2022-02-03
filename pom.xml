@@ -125,6 +125,7 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analysis-kuromoji</artifactId>
 			<version>${lucene.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
