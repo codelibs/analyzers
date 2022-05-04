@@ -26,9 +26,9 @@ import static org.codelibs.analysis.en.AlphaNumWordFilter.ALPHANUM;
 import static org.codelibs.analysis.en.AlphaNumWordFilter.NUM;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.ngram.NGramTokenizer;
+import org.apache.lucene.tests.analysis.BaseTokenStreamTestCase;
 import org.junit.Test;
 
 public class AlphaNumWordFilterTest extends BaseTokenStreamTestCase {

@@ -22,10 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.BaseTokenStreamTestCase;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.codelibs.analysis.en.ReloadableKeywordMarkerFilter;
+import org.apache.lucene.tests.analysis.BaseTokenStreamTestCase;
 import org.junit.Test;
 
 public class ReloadableKeywordMarkerFilterTest extends BaseTokenStreamTestCase {
