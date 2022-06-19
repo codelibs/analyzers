@@ -8,7 +8,7 @@ This library provides Lucene's analyzers.
 
 ## Version
 
-[Versions in Maven Repository](http://central.maven.org/maven2/org/codelibs/analyzers/)
+[Versions in Maven Repository](https://repo1.maven.org/maven2/org/codelibs/analyzers/)
 
 ### Issues/Questions
 
