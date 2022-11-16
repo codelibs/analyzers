@@ -137,7 +137,7 @@ public class KanjiNumberFilter extends TokenFilter {
 
             if (posIncrAttr.getPositionIncrement() == 0) {
                 // This token is a stacked/synonym token, capture number of tokens "under" this token,
-                // except the first token we will emit below after restoring state 
+                // except the first token we will emit below after restoring state
                 fallThroughTokens = posLengthAttr.getPositionLength() - 1;
                 state = captureState();
                 restoreState(preCompositionState);
@@ -522,7 +522,7 @@ public class KanjiNumberFilter extends TokenFilter {
      * @return true if and only if c is a decimal point
      */
     private boolean isDecimalPoint(final char c) {
-        return c == '.' // U+002E FULL STOP 
+        return c == '.' // U+002E FULL STOP
                 || c == '．'; // U+FF0E FULLWIDTH FULL STOP
     }
 

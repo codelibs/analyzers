@@ -164,7 +164,7 @@ public class FlexiblePorterStemmer {
     /* m() measures the number of consonant sequences between k0 and j. if c is
      a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
      presence,
-    
+
           <c><v>       gives 0
           <c>vc<v>     gives 1
           <c>vcvc<v>   gives 2
@@ -227,10 +227,10 @@ public class FlexiblePorterStemmer {
     /* cvc(i) is true <=> i-2,i-1,i has the form consonant - vowel - consonant
      and also if the second c is not w,x or y. this is used when trying to
      restore an e at the end of a short word. e.g.
-    
+
           cav(e), lov(e), hop(e), crim(e), but
           snow, box, tray.
-    
+
     */
 
     private final boolean cvc(int i) {
@@ -276,25 +276,25 @@ public class FlexiblePorterStemmer {
     }
 
     /* step1() gets rid of plurals and -ed or -ing. e.g.
-    
+
            caresses  ->  caress
            ponies    ->  poni
            ties      ->  ti
            caress    ->  caress
            cats      ->  cat
-    
+
            feed      ->  feed
            agreed    ->  agree
            disabled  ->  disable
-    
+
            matting   ->  mat
            mating    ->  mate
            meeting   ->  meet
            milling   ->  mill
            messing   ->  mess
-    
+
            meetings  ->  meet
-    
+
     */
 
     private final void step1() {
@@ -666,17 +666,17 @@ public class FlexiblePorterStemmer {
      * Usage: Stemmer file-name
     public static void main(String[] args) {
     PorterStemmer s = new PorterStemmer();
-    
+
     for (int i = 0; i < args.length; i++) {
       try {
         InputStream in = new FileInputStream(args[i]);
         byte[] buffer = new byte[1024];
         int bufferLen, offset, ch;
-    
+
         bufferLen = in.read(buffer);
         offset = 0;
         s.reset();
-    
+
         while(true) {
           if (offset < bufferLen)
             ch = buffer[offset++];
@@ -688,7 +688,7 @@ public class FlexiblePorterStemmer {
             else
               ch = buffer[offset++];
           }
-    
+
           if (Character.isLetter((char) ch)) {
             s.add(Character.toLowerCase((char) ch));
           }
@@ -703,7 +703,7 @@ public class FlexiblePorterStemmer {
              }
            }
         }
-    
+
         in.close();
       }
       catch (IOException e) {
