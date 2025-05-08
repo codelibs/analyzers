@@ -20,6 +20,15 @@
 		<name>CodeLibs Project</name>
 		<url>https://www.codelibs.org/</url>
 	</organization>
+	<developers>
+		<developer>
+			<id>shinsuke</id>
+			<name>Shinsuke Sugaya</name>
+			<email>shinsuke.sugaya@codelibs.co</email>
+			<organization>CodeLibs Inc.</organization>
+			<organizationUrl>https://www.codelibs.co</organizationUrl>
+		</developer>
+	</developers>
 	<scm>
 		<connection>scm:git:git@github.com:codelibs/analyzers.git</connection>
 		<developerConnection>scm:git:git@github.com:codelibs/analyzers.git</developerConnection>
