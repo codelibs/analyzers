@@ -26,7 +26,7 @@
 			<name>Shinsuke Sugaya</name>
 			<email>shinsuke.sugaya@codelibs.co</email>
 			<organization>CodeLibs Inc.</organization>
-			<organizationUrl>https://www.codelibs.co</organizationUrl>
+			<organizationUrl>https://codelibs.co</organizationUrl>
 		</developer>
 	</developers>
 	<scm>
@@ -109,7 +109,7 @@
 				<configuration>
 					<header>https://www.codelibs.org/assets/license/header.txt</header>
 					<properties>
-						<year>2022</year>
+						<year>2025</year>
 					</properties>
 					<includes>
 						<include>src/**/*.java</include>
