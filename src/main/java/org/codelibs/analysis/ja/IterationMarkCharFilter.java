@@ -20,6 +20,14 @@ import java.lang.Character.UnicodeBlock;
 
 import org.codelibs.analysis.BufferedCharFilter;
 
+/**
+ * Character filter that expands Japanese iteration marks (odoriji).
+ * This filter handles various types of Japanese iteration marks including
+ * kanji iteration marks (々), hiragana iteration marks (ゝゞ), and katakana
+ * iteration marks (ヽヾ), replacing them with the appropriate repeated characters.
+ *
+ * @see <a href="http://ja.wikipedia.org/wiki/%E8%B8%8A%E3%82%8A%E5%AD%97">Odoriji (Wikipedia)</a>
+ */
 // http://ja.wikipedia.org/wiki/%E8%B8%8A%E3%82%8A%E5%AD%97
 public class IterationMarkCharFilter extends BufferedCharFilter {
     private static final String UNVOICED_CONSONANT_HIRAGANA = "かきくけこさしすせそたちつてとはひふへほはひふへほ";
@@ -42,6 +50,11 @@ public class IterationMarkCharFilter extends BufferedCharFilter {
 
     private static final char U303B = '〻';
 
+    /**
+     * Creates a new IterationMarkCharFilter.
+     *
+     * @param in the input reader
+     */
     public IterationMarkCharFilter(final Reader in) {
         super(in);
     }

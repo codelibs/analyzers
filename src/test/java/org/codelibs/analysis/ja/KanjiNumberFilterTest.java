@@ -15,14 +15,9 @@
  */
 package org.codelibs.analysis.ja;
 
-//https://issues.apache.org/jira/browse/LUCENE-3922
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -31,7 +26,6 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.ja.JapaneseTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.tests.analysis.BaseTokenStreamTestCase;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
@@ -180,12 +174,10 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
         BaseTokenStreamTestCase.checkAnalysisConsistency(random(), analyzer, true, "〇〇\u302f\u3029\u3039\u3023\u3033\u302bB", true);
     }
 
-    @Ignore("Used for detailed testing")
     @Test
     public void testLargeData() throws IOException {
-        final String inputFilename = "sample1.txt";
-        final String tokenizedOutput = "sample1.tok.txt";
-        final String normalizedOutput = "sample1.tok.norm.txt";
+        // Test with embedded sample data instead of external files
+        final String sampleText = "本日十万二千五百円のワインを買った。昨日のお寿司は１０万円でした。" + "アティリカの資本金は６００万円です。三五七八九の売上は六百二万五千一円。";
 
         final Analyzer plainAnalyzer = new Analyzer() {
             @Override
@@ -195,9 +187,31 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
             }
         };
 
-        analyze(plainAnalyzer, new BufferedReader(new FileReader(inputFilename)), new BufferedWriter(new FileWriter(tokenizedOutput)));
+        // Test that the KanjiNumberFilter properly processes the text
+        // We'll analyze the sample text and verify that numbers are normalized
+        try (StringReader reader = new StringReader(sampleText)) {
+            final TokenStream stream = analyzer.tokenStream("test", reader);
+            stream.reset();
 
-        analyze(analyzer, new BufferedReader(new FileReader(inputFilename)), new BufferedWriter(new FileWriter(normalizedOutput)));
+            final CharTermAttribute termAttr = stream.addAttribute(CharTermAttribute.class);
+            final StringBuilder result = new StringBuilder();
+
+            while (stream.incrementToken()) {
+                if (result.length() > 0) {
+                    result.append(" ");
+                }
+                result.append(termAttr.toString());
+            }
+
+            String analyzedText = result.toString();
+
+            // Verify that kanji numbers have been converted to Arabic numerals
+            assertTrue("Should contain normalized number 102500", analyzedText.contains("102500"));
+            assertTrue("Should contain normalized number 100000", analyzedText.contains("100000"));
+            assertTrue("Should contain normalized number 6000000", analyzedText.contains("6000000"));
+            assertTrue("Should contain normalized number 35789", analyzedText.contains("35789"));
+            assertTrue("Should contain normalized number 6025001", analyzedText.contains("6025001"));
+        }
     }
 
     public void analyze(final Analyzer analyzer, final Reader reader, final Writer writer) throws IOException {

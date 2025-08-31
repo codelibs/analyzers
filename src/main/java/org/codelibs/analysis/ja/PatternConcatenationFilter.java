@@ -20,12 +20,30 @@ import java.util.regex.Pattern;
 import org.apache.lucene.analysis.TokenStream;
 import org.codelibs.analysis.ConcatenationFilter;
 
+/**
+ * A token filter that uses regular expression patterns to determine token concatenation behavior.
+ * This filter extends the base ConcatenationFilter and uses two patterns: one to identify
+ * target tokens for potential concatenation, and another to determine whether concatenation
+ * should actually occur.
+ *
+ * <p>This filter is useful for Japanese text analysis where specific character patterns
+ * need to be handled with custom concatenation logic based on regular expression matching.</p>
+ */
 public class PatternConcatenationFilter extends ConcatenationFilter {
 
+    /** Regular expression pattern used to identify target tokens */
     private Pattern pattern1;
 
+    /** Regular expression pattern used to determine concatenation behavior */
     private Pattern pattern2;
 
+    /**
+     * Constructs a PatternConcatenationFilter with the specified input token stream and patterns.
+     *
+     * @param input the input TokenStream to filter
+     * @param pattern1 the Pattern used to identify target tokens for potential concatenation
+     * @param pattern2 the Pattern used to determine whether concatenation should occur
+     */
     public PatternConcatenationFilter(TokenStream input, Pattern pattern1, Pattern pattern2) {
         super(input);
         this.pattern1 = pattern1;

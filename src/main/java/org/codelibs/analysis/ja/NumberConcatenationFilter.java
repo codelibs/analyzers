@@ -19,9 +19,24 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.codelibs.analysis.ConcatenationFilter;
 
+/**
+ * A token filter that concatenates tokens containing only numeric characters (digits).
+ * This filter extends the base ConcatenationFilter to specifically handle numeric tokens,
+ * determining whether to concatenate them based on whether they exist in a provided word set.
+ *
+ * <p>This filter is particularly useful for Japanese text analysis where numeric sequences
+ * might need special handling for concatenation based on context.</p>
+ */
 public class NumberConcatenationFilter extends ConcatenationFilter {
+    /** Set of words used to determine concatenation behavior */
     protected CharArraySet words;
 
+    /**
+     * Constructs a NumberConcatenationFilter with the specified input token stream and word set.
+     *
+     * @param input the input TokenStream to filter
+     * @param words the CharArraySet containing words that determine concatenation behavior
+     */
     public NumberConcatenationFilter(TokenStream input, CharArraySet words) {
         super(input);
         this.words = words;

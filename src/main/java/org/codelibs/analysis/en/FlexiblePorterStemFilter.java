@@ -22,11 +22,27 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
 
+/**
+ * Token filter that applies the Porter stemming algorithm with configurable steps.
+ * This filter allows fine-grained control over which steps of the Porter algorithm
+ * are applied, enabling customized stemming behavior.
+ */
 public class FlexiblePorterStemFilter extends TokenFilter {
     private final FlexiblePorterStemmer stemmer;
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
     private final KeywordAttribute keywordAttr = addAttribute(KeywordAttribute.class);
 
+    /**
+     * Creates a new FlexiblePorterStemFilter with configurable stemming steps.
+     *
+     * @param in the input token stream
+     * @param step1 whether to apply step 1 of the Porter algorithm
+     * @param step2 whether to apply step 2 of the Porter algorithm
+     * @param step3 whether to apply step 3 of the Porter algorithm
+     * @param step4 whether to apply step 4 of the Porter algorithm
+     * @param step5 whether to apply step 5 of the Porter algorithm
+     * @param step6 whether to apply step 6 of the Porter algorithm
+     */
     public FlexiblePorterStemFilter(TokenStream in, boolean step1, boolean step2, boolean step3, boolean step4, boolean step5,
             boolean step6) {
         super(in);

@@ -33,14 +33,23 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import org.apache.lucene.util.AttributeSource;
 
+/**
+ * Token filter that concatenates adjacent alphanumeric and numeric tokens.
+ * This filter helps create compound tokens from sequences of alphabetic and numeric characters
+ * that appear consecutively in the token stream.
+ */
 public class AlphaNumWordFilter extends TokenFilter {
 
+    /** Maximum allowed token length limit (1MB) */
     public static final int MAX_TOKEN_LENGTH_LIMIT = 1024 * 1024;
 
+    /** Default maximum token length (255 characters) */
     public static final int DEFAULT_MAX_TOKEN_LENGTH = 255;
 
+    /** Token type constant for alphanumeric tokens */
     public static final int ALPHANUM = 0;
 
+    /** Token type constant for numeric tokens */
     public static final int NUM = 1;
 
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
@@ -49,10 +58,17 @@ public class AlphaNumWordFilter extends TokenFilter {
 
     private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
+    /** Current state of the token stream for lookahead processing */
     protected AttributeSource.State current;
 
+    /** Maximum length for concatenated tokens */
     protected int maxTokenLength = DEFAULT_MAX_TOKEN_LENGTH;
 
+    /**
+     * Creates a new AlphaNumWordFilter.
+     *
+     * @param input the token stream to filter
+     */
     public AlphaNumWordFilter(final TokenStream input) {
         super(input);
     }
@@ -184,6 +200,12 @@ public class AlphaNumWordFilter extends TokenFilter {
         return DEFAULT_TYPE;
     }
 
+    /**
+     * Sets the maximum token length for concatenated tokens.
+     *
+     * @param length the maximum token length (must be between 1 and MAX_TOKEN_LENGTH_LIMIT)
+     * @throws IllegalArgumentException if length is invalid
+     */
     public void setMaxTokenLength(int length) {
         if (length < 1) {
             throw new IllegalArgumentException("maxTokenLength must be greater than zero");
@@ -195,6 +217,11 @@ public class AlphaNumWordFilter extends TokenFilter {
         }
     }
 
+    /**
+     * Gets the maximum token length for concatenated tokens.
+     *
+     * @return the maximum token length
+     */
     public int getMaxTokenLength() {
         return maxTokenLength;
     }

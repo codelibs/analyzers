@@ -21,9 +21,20 @@ import java.io.StringReader;
 
 import org.apache.lucene.analysis.charfilter.BaseCharFilter;
 
+/**
+ * Abstract base class for character filters that buffer input before processing.
+ * This filter reads all input into memory first, then processes it through the
+ * processInput method before making it available for reading.
+ */
 public abstract class BufferedCharFilter extends BaseCharFilter {
+    /** The reader containing the processed buffered input */
     protected Reader bufferedInput = null;
 
+    /**
+     * Creates a new BufferedCharFilter.
+     *
+     * @param in the input reader to buffer and process
+     */
     public BufferedCharFilter(final Reader in) {
         super(in);
     }
@@ -47,5 +58,11 @@ public abstract class BufferedCharFilter extends BaseCharFilter {
         bufferedInput = new StringReader(processInput(buffered).toString());
     }
 
+    /**
+     * Processes the buffered input and returns the transformed character sequence.
+     *
+     * @param input the buffered input to process
+     * @return the processed character sequence
+     */
     protected abstract CharSequence processInput(CharSequence input);
 }

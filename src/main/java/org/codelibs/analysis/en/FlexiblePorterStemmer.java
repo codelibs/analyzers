@@ -82,10 +82,23 @@ public class FlexiblePorterStemmer {
     private final boolean step5;
     private final boolean step6;
 
+    /**
+     * Creates a new FlexiblePorterStemmer with all steps enabled.
+     */
     public FlexiblePorterStemmer() {
         this(true, true, true, true, true, true);
     }
 
+    /**
+     * Creates a new FlexiblePorterStemmer with configurable steps.
+     *
+     * @param step1 whether to apply step 1 of the Porter algorithm
+     * @param step2 whether to apply step 2 of the Porter algorithm
+     * @param step3 whether to apply step 3 of the Porter algorithm
+     * @param step4 whether to apply step 4 of the Porter algorithm
+     * @param step5 whether to apply step 5 of the Porter algorithm
+     * @param step6 whether to apply step 6 of the Porter algorithm
+     */
     public FlexiblePorterStemmer(boolean step1, boolean step2, boolean step3, boolean step4, boolean step5, boolean step6) {
         this.step1 = step1;
         this.step2 = step2;
@@ -108,8 +121,10 @@ public class FlexiblePorterStemmer {
     }
 
     /**
-     * Add a character to the word being stemmed.  When you are finished
+     * Add a character to the word being stemmed. When you are finished
      * adding characters, you can call stem(void) to process the word.
+     *
+     * @param ch the character to add
      */
     public void add(char ch) {
         if (b.length <= i) {
@@ -130,6 +145,8 @@ public class FlexiblePorterStemmer {
 
     /**
      * Returns the length of the word resulting from the stemming process.
+     *
+     * @return the length of the stemmed word
      */
     public int getResultLength() {
         return i;
@@ -137,8 +154,10 @@ public class FlexiblePorterStemmer {
 
     /**
      * Returns a reference to a character buffer containing the results of
-     * the stemming process.  You also need to consult getResultLength()
+     * the stemming process. You also need to consult getResultLength()
      * to determine the length of the result.
+     *
+     * @return the character buffer containing the stemmed word
      */
     public char[] getResultBuffer() {
         return b;
@@ -580,7 +599,10 @@ public class FlexiblePorterStemmer {
     }
 
     /**
-     * Stem a word provided as a String.  Returns the result as a String.
+     * Stem a word provided as a String. Returns the result as a String.
+     *
+     * @param s the word to stem
+     * @return the stemmed word, or the original word if stemming had no effect
      */
     public String stem(String s) {
         if (stem(s.toCharArray(), s.length()))
@@ -589,18 +611,28 @@ public class FlexiblePorterStemmer {
             return s;
     }
 
-    /** Stem a word contained in a char[].  Returns true if the stemming process
-     * resulted in a word different from the input.  You can retrieve the
+    /**
+     * Stem a word contained in a char[]. Returns true if the stemming process
+     * resulted in a word different from the input. You can retrieve the
      * result with getResultLength()/getResultBuffer() or toString().
+     *
+     * @param word the word to stem
+     * @return true if the word was modified
      */
     public boolean stem(char[] word) {
         return stem(word, word.length);
     }
 
-    /** Stem a word contained in a portion of a char[] array.  Returns
+    /**
+     * Stem a word contained in a portion of a char[] array. Returns
      * true if the stemming process resulted in a word different from
-     * the input.  You can retrieve the result with
+     * the input. You can retrieve the result with
      * getResultLength()/getResultBuffer() or toString().
+     *
+     * @param wordBuffer the buffer containing the word
+     * @param offset the offset of the word in the buffer
+     * @param wordLen the length of the word
+     * @return true if the word was modified
      */
     public boolean stem(char[] wordBuffer, int offset, int wordLen) {
         reset();
@@ -612,24 +644,38 @@ public class FlexiblePorterStemmer {
         return stem(0);
     }
 
-    /** Stem a word contained in a leading portion of a char[] array.
+    /**
+     * Stem a word contained in a leading portion of a char[] array.
      * Returns true if the stemming process resulted in a word different
-     * from the input.  You can retrieve the result with
+     * from the input. You can retrieve the result with
      * getResultLength()/getResultBuffer() or toString().
+     *
+     * @param word the buffer containing the word
+     * @param wordLen the length of the word
+     * @return true if the word was modified
      */
     public boolean stem(char[] word, int wordLen) {
         return stem(word, 0, wordLen);
     }
 
-    /** Stem the word placed into the Stemmer buffer through calls to add().
+    /**
+     * Stem the word placed into the Stemmer buffer through calls to add().
      * Returns true if the stemming process resulted in a word different
-     * from the input.  You can retrieve the result with
+     * from the input. You can retrieve the result with
      * getResultLength()/getResultBuffer() or toString().
+     *
+     * @return true if the word was modified
      */
     public boolean stem() {
         return stem(0);
     }
 
+    /**
+     * Stem the word in the buffer starting at the given offset.
+     *
+     * @param i0 the starting offset in the buffer
+     * @return true if the word was modified
+     */
     public boolean stem(int i0) {
         k = i - 1;
         k0 = i0;
