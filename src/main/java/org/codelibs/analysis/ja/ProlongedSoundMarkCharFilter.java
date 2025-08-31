@@ -20,6 +20,29 @@ import java.lang.Character.UnicodeBlock;
 
 import org.codelibs.analysis.BufferedCharFilter;
 
+/**
+ * A character filter that normalizes various dash and hyphen characters to Japanese prolonged sound marks
+ * when they appear after Hiragana, Katakana, or Katakana phonetic extension characters.
+ *
+ * <p>This filter is specifically designed for Japanese text processing, where various dash-like characters
+ * (including ASCII hyphens, full-width hyphens, en dashes, em dashes, etc.) should be normalized to the
+ * Japanese prolonged sound mark (U+30FC) when used to extend Japanese syllables.</p>
+ *
+ * <p>The filter recognizes and converts the following characters:</p>
+ * <ul>
+ * <li>U+002D (HYPHEN-MINUS)</li>
+ * <li>U+FF0D (FULLWIDTH HYPHEN-MINUS)</li>
+ * <li>U+2010 (HYPHEN)</li>
+ * <li>U+2011 (NON-BREAKING HYPHEN)</li>
+ * <li>U+2012 (FIGURE DASH)</li>
+ * <li>U+2013 (EN DASH)</li>
+ * <li>U+2014 (EM DASH)</li>
+ * <li>U+2015 (HORIZONTAL BAR)</li>
+ * <li>U+207B (SUPERSCRIPT MINUS)</li>
+ * <li>U+208B (SUBSCRIPT MINUS)</li>
+ * <li>U+30FC (KATAKANA-HIRAGANA SOUND MARK)</li>
+ * </ul>
+ */
 public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
 
     private static final char U002D = '\u002d'; // HYPHEN-MINUS
@@ -44,12 +67,24 @@ public class ProlongedSoundMarkCharFilter extends BufferedCharFilter {
 
     private static final char U30FC = '\u30fc'; // KATAKANA-HIRAGANA SOUND MARK
 
+    /** The character to use as replacement for normalized dash characters */
     private final char replacement;
 
+    /**
+     * Constructs a ProlongedSoundMarkCharFilter with the default replacement character (U+30FC).
+     *
+     * @param in the Reader providing the input character stream
+     */
     public ProlongedSoundMarkCharFilter(final Reader in) {
         this(in, U30FC);
     }
 
+    /**
+     * Constructs a ProlongedSoundMarkCharFilter with a custom replacement character.
+     *
+     * @param in the Reader providing the input character stream
+     * @param replacement the character to use when replacing dash characters that follow Japanese characters
+     */
     public ProlongedSoundMarkCharFilter(final Reader in, final char replacement) {
         super(in);
         this.replacement = replacement;

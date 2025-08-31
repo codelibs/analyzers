@@ -23,20 +23,43 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.util.AttributeSource;
 
+/**
+ * Abstract base class for token filters that concatenate adjacent tokens.
+ * Subclasses must implement isTarget() and isConcatenated() to define
+ * which tokens to process and when to concatenate them.
+ */
 public abstract class ConcatenationFilter extends TokenFilter {
 
+    /** The term attribute for accessing and modifying token text */
     protected final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
+    /** The offset attribute for managing token offsets */
     protected final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
 
+    /** State for storing lookahead tokens */
     protected AttributeSource.State current;
 
+    /**
+     * Creates a new ConcatenationFilter.
+     *
+     * @param input the input token stream
+     */
     protected ConcatenationFilter(final TokenStream input) {
         super(input);
     }
 
+    /**
+     * Determines if the current token should be processed for concatenation.
+     *
+     * @return true if the token should be considered for concatenation
+     */
     protected abstract boolean isTarget();
 
+    /**
+     * Determines if the next token should be concatenated with the current token.
+     *
+     * @return true if concatenation should occur
+     */
     protected abstract boolean isConcatenated();
 
     @Override
@@ -54,6 +77,12 @@ public abstract class ConcatenationFilter extends TokenFilter {
         return processToken();
     }
 
+    /**
+     * Processes the current token, potentially concatenating it with following tokens.
+     *
+     * @return true if a token is available
+     * @throws IOException if an I/O error occurs
+     */
     protected boolean processToken() throws IOException {
         if (!isTarget()) {
             return true;
@@ -74,6 +103,11 @@ public abstract class ConcatenationFilter extends TokenFilter {
         return true;
     }
 
+    /**
+     * Concatenates the current token with the previous token.
+     *
+     * @param previousState the state of the previous token
+     */
     protected void concatenateTerms(final State previousState) {
         final String term = termAtt.toString();
         final int endOffset = offsetAtt.endOffset();

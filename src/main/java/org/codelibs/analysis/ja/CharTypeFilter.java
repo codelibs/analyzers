@@ -21,6 +21,11 @@ import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
+/**
+ * Token filter that accepts tokens based on character type criteria.
+ * Filters tokens based on whether they contain lowercase alphabetic characters,
+ * digits, or any letter characters.
+ */
 public class CharTypeFilter extends FilteringTokenFilter {
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
@@ -30,6 +35,14 @@ public class CharTypeFilter extends FilteringTokenFilter {
 
     private boolean letter;
 
+    /**
+     * Creates a new CharTypeFilter.
+     *
+     * @param in the input token stream
+     * @param alphabetic if true, accept tokens containing lowercase alphabetic characters (a-z)
+     * @param digit if true, accept tokens containing digit characters
+     * @param letter if true, accept tokens containing any letter characters
+     */
     public CharTypeFilter(TokenStream in, boolean alphabetic, boolean digit, boolean letter) {
         super(in);
         this.alphabetic = alphabetic;

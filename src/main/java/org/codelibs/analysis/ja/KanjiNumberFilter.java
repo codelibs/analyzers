@@ -85,6 +85,11 @@ public class KanjiNumberFilter extends TokenFilter {
         exponents['垓'] = 20; // 垓 U+5793 100,000,000,000,000,000,000
     }
 
+    /**
+     * Creates a new KanjiNumberFilter.
+     *
+     * @param input the input token stream
+     */
     public KanjiNumberFilter(final TokenStream input) {
         super(input);
     }
@@ -546,23 +551,47 @@ public class KanjiNumberFilter extends TokenFilter {
 
         private String string;
 
+        /**
+         * Creates a new NumberBuffer.
+         *
+         * @param string the Japanese number string to parse
+         */
         public NumberBuffer(final String string) {
             this.string = string;
             position = 0;
         }
 
+        /**
+         * Returns the character at the specified index.
+         *
+         * @param index the index of the character to return
+         * @return the character at the specified index
+         */
         public char charAt(final int index) {
             return string.charAt(index);
         }
 
+        /**
+         * Returns the length of the buffer.
+         *
+         * @return the length of the buffer
+         */
         public int length() {
             return string.length();
         }
 
+        /**
+         * Advances the position index by one.
+         */
         public void advance() {
             position++;
         }
 
+        /**
+         * Returns the current position index.
+         *
+         * @return the current position index
+         */
         public int position() {
             return position;
         }

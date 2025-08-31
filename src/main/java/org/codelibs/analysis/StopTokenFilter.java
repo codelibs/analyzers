@@ -22,14 +22,35 @@ import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
+/**
+ * Abstract base class for stop token filters that match tokens against a word list.
+ * This filter extends Lucene's FilteringTokenFilter and provides a framework for implementing
+ * custom stop word matching logic based on an array of stop words.
+ *
+ * <p>Subclasses must implement the {@code accept(String, String)} method to define
+ * the specific matching criteria (e.g., prefix matching, suffix matching, exact matching).</p>
+ *
+ * <p>The filter supports both case-sensitive and case-insensitive matching. When case-insensitive
+ * matching is enabled, all comparisons are performed using lowercase text with the ROOT locale.</p>
+ */
 public abstract class StopTokenFilter extends FilteringTokenFilter {
 
+    /** Character term attribute for accessing the current token's text */
     protected final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
+    /** Array of stop words to match against */
     protected final String[] words;
 
+    /** Whether to ignore case when matching stop words */
     protected final boolean ignoreCase;
 
+    /**
+     * Constructs a StopTokenFilter with the specified input stream, stop words, and case sensitivity.
+     *
+     * @param in the input TokenStream to filter
+     * @param words the array of stop words to match against
+     * @param ignoreCase whether to ignore case when matching stop words
+     */
     public StopTokenFilter(TokenStream in, String[] words, boolean ignoreCase) {
         super(in);
         this.words = words;
@@ -50,5 +71,13 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
         return true;
     }
 
+    /**
+     * Determines whether the given text should be accepted based on a comparison with a stop word.
+     * This method defines the specific matching criteria for the filter.
+     *
+     * @param text the current token's text (possibly converted to lowercase if ignoreCase is true)
+     * @param word the stop word to compare against
+     * @return true if the token should be filtered out (rejected), false if it should pass through
+     */
     protected abstract boolean accept(final String text, String word);
 }

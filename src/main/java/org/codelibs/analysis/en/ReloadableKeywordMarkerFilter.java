@@ -27,20 +27,44 @@ import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.analysis.miscellaneous.KeywordMarkerFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
+/**
+ * A keyword marker filter that can dynamically reload its keyword set from a file.
+ * This filter extends Lucene's KeywordMarkerFilter and adds the capability to automatically
+ * reload the keyword list from a specified file path when the file is modified.
+ *
+ * <p>The filter monitors the keyword file for changes and reloads the keyword set based on
+ * a configurable reload interval. This allows for dynamic updates to the keyword list without
+ * requiring analyzer or application restart.</p>
+ *
+ * <p>Keywords are loaded from a text file with one keyword per line, using UTF-8 encoding.</p>
+ */
 public class ReloadableKeywordMarkerFilter extends KeywordMarkerFilter {
 
+    /** Character term attribute for accessing the current token's text */
     private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
+    /** Set containing the current keywords loaded from file */
     private CharArraySet keywordSet;
 
+    /** Path to the file containing keywords */
     private final Path keywordPath;
 
+    /** Interval in milliseconds between reload checks */
     private long reloadInterval;
 
+    /** Timestamp when the next reload check should occur */
     private long expiry;
 
+    /** Last modification time of the keyword file when it was loaded */
     private long lastModifed;
 
+    /**
+     * Constructs a ReloadableKeywordMarkerFilter with the specified input stream, keyword file path, and reload interval.
+     *
+     * @param in the input TokenStream to filter
+     * @param keywordPath the Path to the file containing keywords (one per line, UTF-8 encoded)
+     * @param reloadInterval the interval in milliseconds between checks for file modifications
+     */
     public ReloadableKeywordMarkerFilter(TokenStream in, Path keywordPath, long reloadInterval) {
         super(in);
         this.keywordPath = keywordPath;
