@@ -18,6 +18,7 @@ package org.codelibs.analysis;
 import java.io.IOException;
 import java.util.Locale;
 
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -41,6 +42,9 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
     /** Array of stop words to match against */
     protected final String[] words;
 
+    /** Set of stop words for efficient lookup */
+    protected final CharArraySet stopWordSet;
+
     /** Whether to ignore case when matching stop words */
     protected final boolean ignoreCase;
 
@@ -55,11 +59,21 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
         super(in);
         this.words = words;
         this.ignoreCase = ignoreCase;
+        // Create CharArraySet for efficient matching
+        this.stopWordSet = new CharArraySet(words.length, ignoreCase);
+        for (String word : words) {
+            if (ignoreCase) {
+                stopWordSet.add(word.toLowerCase(Locale.ROOT));
+            } else {
+                stopWordSet.add(word);
+            }
+        }
     }
 
     @Override
     protected boolean accept() throws IOException {
-        String text = new String(termAtt.buffer(), 0, termAtt.length());
+        // Convert to String once and reuse
+        String text = termAtt.toString();
         if (ignoreCase) {
             text = text.toLowerCase(Locale.ROOT);
         }
