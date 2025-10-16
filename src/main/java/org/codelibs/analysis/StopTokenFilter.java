@@ -18,7 +18,6 @@ package org.codelibs.analysis;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.FilteringTokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -39,11 +38,8 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
     /** Character term attribute for accessing the current token's text */
     protected final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
-    /** Array of stop words to match against */
-    protected final String[] words;
-
-    /** Set of stop words for efficient lookup */
-    protected final CharArraySet stopWordSet;
+    /** Array of stop words to match against (normalized to lowercase if ignoreCase is true) */
+    protected final String[] normalizedWords;
 
     /** Whether to ignore case when matching stop words */
     protected final boolean ignoreCase;
@@ -57,16 +53,15 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
      */
     public StopTokenFilter(TokenStream in, String[] words, boolean ignoreCase) {
         super(in);
-        this.words = words;
         this.ignoreCase = ignoreCase;
-        // Create CharArraySet for efficient matching
-        this.stopWordSet = new CharArraySet(words.length, ignoreCase);
-        for (String word : words) {
-            if (ignoreCase) {
-                stopWordSet.add(word.toLowerCase(Locale.ROOT));
-            } else {
-                stopWordSet.add(word);
+        // Normalize words to lowercase if case-insensitive matching is enabled
+        if (ignoreCase) {
+            this.normalizedWords = new String[words.length];
+            for (int i = 0; i < words.length; i++) {
+                this.normalizedWords[i] = words[i].toLowerCase(Locale.ROOT);
             }
+        } else {
+            this.normalizedWords = words;
         }
     }
 
@@ -77,7 +72,7 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
         if (ignoreCase) {
             text = text.toLowerCase(Locale.ROOT);
         }
-        for (String word : words) {
+        for (String word : normalizedWords) {
             if (accept(text, word)) {
                 return false;
             }
