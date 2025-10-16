@@ -17,7 +17,7 @@ package org.codelibs.analysis.en;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -56,7 +56,7 @@ public class ReloadableKeywordMarkerFilter extends KeywordMarkerFilter {
     private long expiry;
 
     /** Last modification time of the keyword file when it was loaded */
-    private long lastModifed;
+    private long lastModified;
 
     /**
      * Constructs a ReloadableKeywordMarkerFilter with the specified input stream, keyword file path, and reload interval.
@@ -82,7 +82,7 @@ public class ReloadableKeywordMarkerFilter extends KeywordMarkerFilter {
     @Override
     public void reset() throws IOException {
         if (expiry < System.currentTimeMillis()) {
-            if (Files.getLastModifiedTime(keywordPath).toMillis() > lastModifed) {
+            if (Files.getLastModifiedTime(keywordPath).toMillis() > lastModified) {
                 loadKeywordSet();
             }
             expiry = System.currentTimeMillis() + reloadInterval;
@@ -91,11 +91,11 @@ public class ReloadableKeywordMarkerFilter extends KeywordMarkerFilter {
     }
 
     private void loadKeywordSet() {
-        try (BufferedReader reader = Files.newBufferedReader(keywordPath, Charset.forName("UTF-8"))) {
+        try (BufferedReader reader = Files.newBufferedReader(keywordPath, StandardCharsets.UTF_8)) {
             keywordSet = WordlistLoader.getWordSet(reader);
-            lastModifed = Files.getLastModifiedTime(keywordPath).toMillis();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to read " + keywordPath, e);
+            lastModified = Files.getLastModifiedTime(keywordPath).toMillis();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to read keyword file: " + keywordPath, e);
         }
     }
 

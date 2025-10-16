@@ -38,8 +38,8 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
     /** Character term attribute for accessing the current token's text */
     protected final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 
-    /** Array of stop words to match against */
-    protected final String[] words;
+    /** Array of stop words to match against (normalized to lowercase if ignoreCase is true) */
+    protected final String[] normalizedWords;
 
     /** Whether to ignore case when matching stop words */
     protected final boolean ignoreCase;
@@ -53,17 +53,26 @@ public abstract class StopTokenFilter extends FilteringTokenFilter {
      */
     public StopTokenFilter(TokenStream in, String[] words, boolean ignoreCase) {
         super(in);
-        this.words = words;
         this.ignoreCase = ignoreCase;
+        // Normalize words to lowercase if case-insensitive matching is enabled
+        if (ignoreCase) {
+            this.normalizedWords = new String[words.length];
+            for (int i = 0; i < words.length; i++) {
+                this.normalizedWords[i] = words[i].toLowerCase(Locale.ROOT);
+            }
+        } else {
+            this.normalizedWords = words;
+        }
     }
 
     @Override
     protected boolean accept() throws IOException {
-        String text = new String(termAtt.buffer(), 0, termAtt.length());
+        // Convert to String once and reuse
+        String text = termAtt.toString();
         if (ignoreCase) {
             text = text.toLowerCase(Locale.ROOT);
         }
-        for (String word : words) {
+        for (String word : normalizedWords) {
             if (accept(text, word)) {
                 return false;
             }

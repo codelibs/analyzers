@@ -17,7 +17,7 @@ package org.codelibs.analysis.en;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -63,7 +63,7 @@ public class ReloadableStopFilter extends FilteringTokenFilter {
     private boolean ignoreCase;
 
     /** Last modification time of the stop word file when it was loaded */
-    private long lastModifed;
+    private long lastModified;
 
     /**
      * Constructs a ReloadableStopFilter with the specified input stream, stop word file path, case sensitivity, and reload interval.
@@ -91,7 +91,7 @@ public class ReloadableStopFilter extends FilteringTokenFilter {
     @Override
     public void reset() throws IOException {
         if (expiry < System.currentTimeMillis()) {
-            if (Files.getLastModifiedTime(stopWordPath).toMillis() > lastModifed) {
+            if (Files.getLastModifiedTime(stopWordPath).toMillis() > lastModified) {
                 loadStopWordSet();
             }
             expiry = System.currentTimeMillis() + reloadInterval;
@@ -100,11 +100,11 @@ public class ReloadableStopFilter extends FilteringTokenFilter {
     }
 
     private void loadStopWordSet() {
-        try (BufferedReader reader = Files.newBufferedReader(stopWordPath, Charset.forName("UTF-8"))) {
+        try (BufferedReader reader = Files.newBufferedReader(stopWordPath, StandardCharsets.UTF_8)) {
             stopWords = WordlistLoader.getWordSet(reader, new CharArraySet(INITIAL_CAPACITY, ignoreCase));
-            lastModifed = Files.getLastModifiedTime(stopWordPath).toMillis();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to read " + stopWordPath, e);
+            lastModified = Files.getLastModifiedTime(stopWordPath).toMillis();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to read stop word file: " + stopWordPath, e);
         }
     }
 

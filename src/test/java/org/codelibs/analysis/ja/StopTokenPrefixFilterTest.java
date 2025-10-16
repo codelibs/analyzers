@@ -49,4 +49,44 @@ public class StopTokenPrefixFilterTest extends BaseTokenStreamTestCase {
 
     }
 
+    @Test
+    public void testIgnoreCase() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenPrefixFilter(tokenizer, new String[] { "B", "DD" }, true));
+            }
+        };
+
+        // Test with lowercase input
+        assertAnalyzesTo(analyzer, "aaa bbb ccc ddd eee", //
+                new String[] { "aaa", "ccc", "eee" }, //
+                new int[] { 0, 8, 16 }, //
+                new int[] { 3, 11, 19 }, //
+                new int[] { 1, 2, 2 });
+
+        // Test with uppercase input
+        assertAnalyzesTo(analyzer, "AAA BBB CCC DDD EEE", //
+                new String[] { "AAA", "CCC", "EEE" }, //
+                new int[] { 0, 8, 16 }, //
+                new int[] { 3, 11, 19 }, //
+                new int[] { 1, 2, 2 });
+
+        // Test with mixed case input
+        assertAnalyzesTo(analyzer, "aaa BbB ccc DdD eee", //
+                new String[] { "aaa", "ccc", "eee" }, //
+                new int[] { 0, 8, 16 }, //
+                new int[] { 3, 11, 19 }, //
+                new int[] { 1, 2, 2 });
+
+        // Test specific cases
+        assertAnalyzesTo(analyzer, "Btest", new String[0]);
+        assertAnalyzesTo(analyzer, "bTest", new String[0]);
+        assertAnalyzesTo(analyzer, "BTEST", new String[0]);
+        assertAnalyzesTo(analyzer, "DDabc", new String[0]);
+        assertAnalyzesTo(analyzer, "ddABC", new String[0]);
+        assertAnalyzesTo(analyzer, "aDDb", new String[] { "aDDb" });
+    }
+
 }
