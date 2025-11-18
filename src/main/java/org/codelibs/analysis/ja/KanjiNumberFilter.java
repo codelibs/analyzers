@@ -19,6 +19,8 @@ package org.codelibs.analysis.ja;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -43,11 +45,9 @@ public class KanjiNumberFilter extends TokenFilter {
 
     private final PositionLengthAttribute posLengthAttr = addAttribute(PositionLengthAttribute.class);
 
-    private static char NO_NUMERAL = Character.MAX_VALUE;
+    private static Map<Character, Integer> numerals;
 
-    private static char[] numerals;
-
-    private static char[] exponents;
+    private static Map<Character, Integer> exponents;
 
     private State state;
 
@@ -56,33 +56,27 @@ public class KanjiNumberFilter extends TokenFilter {
     private int fallThroughTokens;
 
     static {
-        numerals = new char[0x10000];
-        for (int i = 0; i < numerals.length; i++) {
-            numerals[i] = NO_NUMERAL;
-        }
-        numerals['〇'] = 0; // 〇 U+3007 0
-        numerals['一'] = 1; // 一 U+4E00 1
-        numerals['二'] = 2; // 二 U+4E8C 2
-        numerals['三'] = 3; // 三 U+4E09 3
-        numerals['四'] = 4; // 四 U+56DB 4
-        numerals['五'] = 5; // 五 U+4E94 5
-        numerals['六'] = 6; // 六 U+516D 6
-        numerals['七'] = 7; // 七 U+4E03 7
-        numerals['八'] = 8; // 八 U+516B 8
-        numerals['九'] = 9; // 九 U+4E5D 9
+        numerals = new HashMap<>(10);
+        numerals.put('〇', 0); // 〇 U+3007 0
+        numerals.put('一', 1); // 一 U+4E00 1
+        numerals.put('二', 2); // 二 U+4E8C 2
+        numerals.put('三', 3); // 三 U+4E09 3
+        numerals.put('四', 4); // 四 U+56DB 4
+        numerals.put('五', 5); // 五 U+4E94 5
+        numerals.put('六', 6); // 六 U+516D 6
+        numerals.put('七', 7); // 七 U+4E03 7
+        numerals.put('八', 8); // 八 U+516B 8
+        numerals.put('九', 9); // 九 U+4E5D 9
 
-        exponents = new char[0x10000];
-        for (int i = 0; i < exponents.length; i++) {
-            exponents[i] = 0;
-        }
-        exponents['十'] = 1; // 十 U+5341 10
-        exponents['百'] = 2; // 百 U+767E 100
-        exponents['千'] = 3; // 千 U+5343 1,000
-        exponents['万'] = 4; // 万 U+4E07 10,000
-        exponents['億'] = 8; // 億 U+5104 100,000,000
-        exponents['兆'] = 12; // 兆 U+5146 1,000,000,000,000
-        exponents['京'] = 16; // 京 U+4EAC 10,000,000,000,000,000
-        exponents['垓'] = 20; // 垓 U+5793 100,000,000,000,000,000,000
+        exponents = new HashMap<>(8);
+        exponents.put('十', 1); // 十 U+5341 10
+        exponents.put('百', 2); // 百 U+767E 100
+        exponents.put('千', 3); // 千 U+5343 1,000
+        exponents.put('万', 4); // 万 U+4E07 10,000
+        exponents.put('億', 8); // 億 U+5104 100,000,000
+        exponents.put('兆', 12); // 兆 U+5146 1,000,000,000,000
+        exponents.put('京', 16); // 京 U+4EAC 10,000,000,000,000,000
+        exponents.put('垓', 20); // 垓 U+5793 100,000,000,000,000,000,000
     }
 
     /**
@@ -188,7 +182,7 @@ public class KanjiNumberFilter extends TokenFilter {
     /**
      * Normalizes a Japanese number
      *
-     * @param number number or normalize
+     * @param number number to normalize
      * @return normalized number, or number to normalize on error (no op)
      */
     public String normalizeNumber(final String number) {
@@ -356,7 +350,7 @@ public class KanjiNumberFilter extends TokenFilter {
      * @param buffer buffer to parse
      * @return parsed number, or null on error or end of input
      */
-    public BigDecimal parseLargeKanjiNumeral(final NumberBuffer buffer) {
+    private BigDecimal parseLargeKanjiNumeral(final NumberBuffer buffer) {
         final int i = buffer.position();
 
         if (i >= buffer.length()) {
@@ -364,7 +358,7 @@ public class KanjiNumberFilter extends TokenFilter {
         }
 
         final char c = buffer.charAt(i);
-        final int power = exponents[c];
+        final int power = exponents.getOrDefault(c, 0);
 
         if (power > 3) {
             buffer.advance();
@@ -380,7 +374,7 @@ public class KanjiNumberFilter extends TokenFilter {
      * @param buffer buffer to parse
      * @return parsed number or null on error
      */
-    public BigDecimal parseMediumKanjiNumeral(final NumberBuffer buffer) {
+    private BigDecimal parseMediumKanjiNumeral(final NumberBuffer buffer) {
         final int i = buffer.position();
 
         if (i >= buffer.length()) {
@@ -388,7 +382,7 @@ public class KanjiNumberFilter extends TokenFilter {
         }
 
         final char c = buffer.charAt(i);
-        final int power = exponents[c];
+        final int power = exponents.getOrDefault(c, 0);
 
         if (1 <= power && power <= 3) {
             buffer.advance();
@@ -420,7 +414,7 @@ public class KanjiNumberFilter extends TokenFilter {
      * @return true if and only if c is a numeral
      */
     public boolean isNumeral(final char c) {
-        return isArabicNumeral(c) || isKanjiNumeral(c) || exponents[c] > 0;
+        return isArabicNumeral(c) || isKanjiNumeral(c) || exponents.getOrDefault(c, 0) > 0;
     }
 
     /**
@@ -505,7 +499,7 @@ public class KanjiNumberFilter extends TokenFilter {
      * @return true if and only is character is one of 〇, 一, 二, 三, 四, 五, 六, 七, 八, or 九 (0 to 9)
      */
     private boolean isKanjiNumeral(final char c) {
-        return numerals[c] != NO_NUMERAL;
+        return numerals.containsKey(c);
     }
 
     /**
@@ -517,7 +511,7 @@ public class KanjiNumberFilter extends TokenFilter {
      * @see #isKanjiNumeral(char)
      */
     private int kanjiNumeralValue(final char c) {
-        return numerals[c];
+        return numerals.get(c);
     }
 
     /**
@@ -545,7 +539,7 @@ public class KanjiNumberFilter extends TokenFilter {
     /**
      * Buffer that holds a Japanese number string and a position index used as a parsed-to marker
      */
-    public static class NumberBuffer {
+    private static class NumberBuffer {
 
         private int position;
 
