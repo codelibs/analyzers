@@ -143,4 +143,68 @@ public class CharTypeFilterTest extends BaseTokenStreamTestCase {
             assertAnalyzesTo(analyzer, target, new String[0]);
         }
     }
+
+    @Test
+    public void testAlphabeticUpperCase() throws IOException {
+        // Test that uppercase letters are correctly filtered
+        // The alphabetic filter checks for lowercase 'a'-'z' only
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, true, false, false));
+            }
+        };
+
+        // Uppercase should not match since the condition is 'a' <= c && c <= 'z'
+        assertAnalyzesTo(analyzer, "AAA BBB CCC", new String[0]);
+
+        // Mixed case should match only if it contains lowercase
+        assertAnalyzesTo(analyzer, "AaA BbB CcC", new String[] { "AaA", "BbB", "CcC" });
+
+        // Lowercase should match
+        assertAnalyzesTo(analyzer, "abc def", new String[] { "abc", "def" });
+    }
+
+    @Test
+    public void testAlphabeticBoundaryCharacters() throws IOException {
+        // Test boundary characters for 'a' <= c && c <= 'z' condition
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, true, false, false));
+            }
+        };
+
+        // Test exact boundaries
+        assertAnalyzesTo(analyzer, "a", new String[] { "a" }); // 'a' (U+0061)
+        assertAnalyzesTo(analyzer, "z", new String[] { "z" }); // 'z' (U+007A)
+
+        // Test just outside boundaries
+        assertAnalyzesTo(analyzer, "`", new String[0]); // '`' (U+0060, just before 'a')
+        assertAnalyzesTo(analyzer, "{", new String[0]); // '{' (U+007B, just after 'z')
+
+        // Test characters adjacent to boundaries
+        assertAnalyzesTo(analyzer, "@a", new String[] { "@a" }); // Contains 'a'
+        assertAnalyzesTo(analyzer, "z{", new String[] { "z{" }); // Contains 'z'
+    }
+
+    @Test
+    public void testDigitBoundaryCharacters() throws IOException {
+        // Test digit detection with various Unicode digits
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, false, true, false));
+            }
+        };
+
+        // ASCII digits
+        assertAnalyzesTo(analyzer, "0123456789", new String[] { "0123456789" });
+
+        // Full-width digits
+        assertAnalyzesTo(analyzer, "０１２３４５６７８９", new String[] { "０１２３４５６７８９" });
+    }
 }
