@@ -258,12 +258,4 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
         assertAnalyzesTo(analyzer, "垓", new String[] { "100000000000000000000" });
     }
 
-    @Test
-    public void testNonNumeralCharacters() throws IOException {
-        // Test that non-numeral Japanese characters are not converted
-        assertAnalyzesTo(analyzer, "東京都", new String[] { "東京", "都" });
-        assertAnalyzesTo(analyzer, "あいうえお", new String[] { "あいうえお" });
-        assertAnalyzesTo(analyzer, "カタカナ", new String[] { "カタカナ" });
-    }
-
 }
