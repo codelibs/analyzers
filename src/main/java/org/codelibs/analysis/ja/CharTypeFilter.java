@@ -54,7 +54,7 @@ public class CharTypeFilter extends FilteringTokenFilter {
     protected boolean accept() throws IOException {
         for (int i = 0; i < termAtt.length(); i++) {
             char c = termAtt.charAt(i);
-            if (alphabetic && ('a' <= c && 'z' >= c)) {
+            if (alphabetic && ('a' <= c && c <= 'z')) {
                 return true;
             }
             if (digit && Character.isDigit(c)) {

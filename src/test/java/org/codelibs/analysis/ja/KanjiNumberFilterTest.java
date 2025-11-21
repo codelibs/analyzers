@@ -230,4 +230,32 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
         writer.close();
     }
 
+    @Test
+    public void testAllKanjiNumerals() throws IOException {
+        // Test that all kanji numerals (〇-九) are correctly mapped in HashMap
+        assertAnalyzesTo(analyzer, "〇", new String[] { "0" });
+        assertAnalyzesTo(analyzer, "一", new String[] { "1" });
+        assertAnalyzesTo(analyzer, "二", new String[] { "2" });
+        assertAnalyzesTo(analyzer, "三", new String[] { "3" });
+        assertAnalyzesTo(analyzer, "四", new String[] { "4" });
+        assertAnalyzesTo(analyzer, "五", new String[] { "5" });
+        assertAnalyzesTo(analyzer, "六", new String[] { "6" });
+        assertAnalyzesTo(analyzer, "七", new String[] { "7" });
+        assertAnalyzesTo(analyzer, "八", new String[] { "8" });
+        assertAnalyzesTo(analyzer, "九", new String[] { "9" });
+    }
+
+    @Test
+    public void testAllExponents() throws IOException {
+        // Test that all exponents (十,百,千,万,億,兆,京,垓) are correctly mapped in HashMap
+        assertAnalyzesTo(analyzer, "十", new String[] { "10" });
+        assertAnalyzesTo(analyzer, "百", new String[] { "100" });
+        assertAnalyzesTo(analyzer, "千", new String[] { "1000" });
+        assertAnalyzesTo(analyzer, "万", new String[] { "10000" });
+        assertAnalyzesTo(analyzer, "億", new String[] { "100000000" });
+        assertAnalyzesTo(analyzer, "兆", new String[] { "1000000000000" });
+        assertAnalyzesTo(analyzer, "京", new String[] { "10000000000000000" });
+        assertAnalyzesTo(analyzer, "垓", new String[] { "100000000000000000000" });
+    }
+
 }
