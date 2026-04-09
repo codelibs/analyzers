@@ -615,4 +615,74 @@ public class FlexiblePorterStemmerTest {
         Assert.assertEquals("knot", stemmer.stem("knot"));
         Assert.assertEquals("knot", stemmer.stem("knots"));
     }
+
+    @Test
+    public void testShortWords() throws IOException {
+        FlexiblePorterStemmer stemmer = new FlexiblePorterStemmer();
+
+        // Single character: k > k0 + 1 is false, no steps run
+        Assert.assertEquals("a", stemmer.stem("a"));
+        Assert.assertEquals("i", stemmer.stem("i"));
+        Assert.assertEquals("x", stemmer.stem("x"));
+
+        // Two characters: k == k0 + 1, so k > k0 + 1 is false; no steps run
+        Assert.assertEquals("at", stemmer.stem("at"));
+        Assert.assertEquals("go", stemmer.stem("go"));
+        Assert.assertEquals("is", stemmer.stem("is"));
+    }
+
+    @Test
+    public void testEmptyString() throws IOException {
+        FlexiblePorterStemmer stemmer = new FlexiblePorterStemmer();
+        Assert.assertEquals("", stemmer.stem(""));
+    }
+
+    @Test
+    public void testAddAndStem() throws IOException {
+        // Test the incremental add(char) + stem() API
+        FlexiblePorterStemmer stemmer = new FlexiblePorterStemmer();
+        String word = "running";
+        for (char c : word.toCharArray()) {
+            stemmer.add(c);
+        }
+        stemmer.stem(0);
+        Assert.assertEquals("run", stemmer.toString());
+    }
+
+    @Test
+    public void testResetBetweenWords() throws IOException {
+        // Test reset() + add() + stem() flow for multiple words
+        FlexiblePorterStemmer stemmer = new FlexiblePorterStemmer();
+
+        for (char c : "running".toCharArray()) {
+            stemmer.add(c);
+        }
+        stemmer.stem(0);
+        Assert.assertEquals("run", stemmer.toString());
+
+        stemmer.reset();
+        for (char c : "knitting".toCharArray()) {
+            stemmer.add(c);
+        }
+        stemmer.stem(0);
+        Assert.assertEquals("knit", stemmer.toString());
+    }
+
+    @Test
+    public void testStemWithOffset() throws IOException {
+        FlexiblePorterStemmer stemmer = new FlexiblePorterStemmer();
+        // Stem "running" starting at offset 3 in "xyzrunning"
+        char[] buf = "xyzrunning".toCharArray();
+        boolean changed = stemmer.stem(buf, 3, 7);
+        Assert.assertTrue(changed);
+        Assert.assertEquals("run", stemmer.toString());
+    }
+
+    @Test
+    public void testNoStepsEnabled() throws IOException {
+        FlexiblePorterStemmer stemmer = new FlexiblePorterStemmer(false, false, false, false, false, false);
+        // With no steps enabled, word should remain unchanged
+        Assert.assertEquals("running", stemmer.stem("running"));
+        Assert.assertEquals("consolation", stemmer.stem("consolation"));
+    }
 }

@@ -89,4 +89,62 @@ public class StopTokenSuffixFilterTest extends BaseTokenStreamTestCase {
         assertAnalyzesTo(analyzer, "bDDa", new String[] { "bDDa" });
     }
 
+    @Test
+    public void testEmptyStopWord() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenSuffixFilter(tokenizer, new String[] { "" }, false));
+            }
+        };
+
+        // Empty stop word matches all tokens since "anything".endsWith("") is true
+        assertAnalyzesTo(analyzer, "aaa bbb ccc", new String[0]);
+    }
+
+    @Test
+    public void testStopWordLongerThanToken() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenSuffixFilter(tokenizer, new String[] { "running" }, false));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "run", new String[] { "run" });
+        assertAnalyzesTo(analyzer, "running", new String[0]);
+    }
+
+    @Test
+    public void testJapaneseSuffix() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenSuffixFilter(tokenizer, new String[] { "的" }, false));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "合理的 論理 基本的", //
+                new String[] { "論理" }, //
+                new int[] { 4 }, //
+                new int[] { 6 }, //
+                new int[] { 2 });
+    }
+
+    @Test
+    public void testEmptyInput() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenSuffixFilter(tokenizer, new String[] { "a" }, false));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "", new String[0]);
+    }
+
 }

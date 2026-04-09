@@ -207,4 +207,56 @@ public class CharTypeFilterTest extends BaseTokenStreamTestCase {
         // Full-width digits
         assertAnalyzesTo(analyzer, "０１２３４５６７８９", new String[] { "０１２３４５６７８９" });
     }
+
+    @Test
+    public void testAllFlagsTrue() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, true, true, true));
+            }
+        };
+
+        // All flags true: accept tokens with any lowercase, digit, or letter
+        assertAnalyzesTo(analyzer, "aaa 111 あああ aa1 aaあ 11あ", //
+                new String[] { "aaa", "111", "あああ", "aa1", "aaあ", "11あ" }, //
+                new int[] { 1, 1, 1, 1, 1, 1 });
+
+        // Symbols only should be rejected
+        assertAnalyzesTo(analyzer, "++", new String[0]);
+    }
+
+    @Test
+    public void testAlphabeticAndDigit() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, true, true, false));
+            }
+        };
+
+        // Accept tokens with lowercase a-z or digit
+        assertAnalyzesTo(analyzer, "abc 123 ABC あいう a1B", //
+                new String[] { "abc", "123", "a1B" }, //
+                new int[] { 1, 1, 3 });
+    }
+
+    @Test
+    public void testNonAsciiLetters() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new CharTypeFilter(tokenizer, false, false, true));
+            }
+        };
+
+        // Non-ASCII uppercase letters (letter=true accepts them via Character.isLetter)
+        assertAnalyzesTo(analyzer, "ÄÖÜ", new String[] { "ÄÖÜ" });
+
+        // CJK characters are letters
+        assertAnalyzesTo(analyzer, "漢字", new String[] { "漢字" });
+    }
 }

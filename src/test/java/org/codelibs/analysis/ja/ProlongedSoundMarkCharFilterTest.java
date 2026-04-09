@@ -33,6 +33,44 @@ public class ProlongedSoundMarkCharFilterTest extends BaseTokenStreamTestCase {
         return tokenizer;
     }
 
+    private TokenStream createDefaultTokeStream(final String text) throws IOException {
+        Reader cs = new ProlongedSoundMarkCharFilter(new StringReader(text));
+        MockTokenizer tokenizer = new MockTokenizer(MockTokenizer.WHITESPACE, false);
+        tokenizer.setReader(cs);
+        return tokenizer;
+    }
+
+    @Test
+    public void testDefaultConstructor() throws IOException {
+        // Default constructor uses U+30FC as replacement
+        String psm = "\u002d"; // hyphen-minus
+        assertTokenStreamContents(createDefaultTokeStream("あ" + psm), new String[] { "あ\u30fc" }, new int[] { 0 }, new int[] { 2 });
+        assertTokenStreamContents(createDefaultTokeStream("ア" + psm), new String[] { "ア\u30fc" }, new int[] { 0 }, new int[] { 2 });
+    }
+
+    @Test
+    public void testConsecutiveDashes() throws IOException {
+        // "あ--": first dash after hiragana → replacement; second dash: prev is raw dash (not kana) → no replacement
+        assertTokenStreamContents(createTokeStream("あ--", "\u30fc"), new String[] { "あ\u30fc-" }, new int[] { 0 }, new int[] { 3 });
+    }
+
+    @Test
+    public void testKatakanaPhoneticExtension() throws IOException {
+        // ㇰ (U+31F0) is in KATAKANA_PHONETIC_EXTENSIONS block
+        assertTokenStreamContents(createTokeStream("ㇰ-", "\u30fc"), new String[] { "ㇰ\u30fc" }, new int[] { 0 }, new int[] { 2 });
+    }
+
+    @Test
+    public void testOnlyDashes() throws IOException {
+        // Standalone dashes with no preceding kana should not be replaced
+        assertTokenStreamContents(createTokeStream("---", "\u30fc"), new String[] { "---" }, new int[] { 0 }, new int[] { 3 });
+    }
+
+    @Test
+    public void testEmptyInput() throws IOException {
+        assertTokenStreamContents(createTokeStream("", "\u30fc"), new String[0]);
+    }
+
     @Test
     public void testBasics() throws IOException {
         String[] psms = new String[] { "\u002d", "\uff0d", "\u2010", "\u2011", "\u2012", "\u2013", "\u2014", "\u2015", "\u207b", "\u208b",

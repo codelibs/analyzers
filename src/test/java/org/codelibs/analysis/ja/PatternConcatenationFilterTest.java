@@ -52,4 +52,55 @@ public class PatternConcatenationFilterTest extends BaseTokenStreamTestCase {
 
     }
 
+    @Test
+    public void testPattern1MatchButPattern2NoMatch() throws IOException {
+        final Pattern pattern1 = Pattern.compile("平成|昭和");
+        final Pattern pattern2 = Pattern.compile("[0-9]+年");
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new PatternConcatenationFilter(tokenizer, pattern1, pattern2));
+            }
+        };
+
+        // pattern1 matches "平成" but next token "元年" does not match pattern2
+        assertAnalyzesTo(analyzer, "平成 元年 bbb", //
+                new String[] { "平成", "元年", "bbb" }, //
+                new int[] { 1, 1, 1 });
+    }
+
+    @Test
+    public void testPattern1MatchAtEndOfStream() throws IOException {
+        final Pattern pattern1 = Pattern.compile("平成|昭和");
+        final Pattern pattern2 = Pattern.compile("[0-9]+年");
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new PatternConcatenationFilter(tokenizer, pattern1, pattern2));
+            }
+        };
+
+        // pattern1 matches but it's the last token in stream
+        assertAnalyzesTo(analyzer, "平成", //
+                new String[] { "平成" }, //
+                new int[] { 1 });
+    }
+
+    @Test
+    public void testEmptyInput() throws IOException {
+        final Pattern pattern1 = Pattern.compile("平成|昭和");
+        final Pattern pattern2 = Pattern.compile("[0-9]+年");
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new PatternConcatenationFilter(tokenizer, pattern1, pattern2));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "", new String[0]);
+    }
+
 }
