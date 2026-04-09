@@ -69,4 +69,75 @@ public class NumberConcatenationFilterTest extends BaseTokenStreamTestCase {
 
     }
 
+    @Test
+    public void testEmptyWordsSet() throws IOException {
+        final CharArraySet words = new CharArraySet(0, false);
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new NumberConcatenationFilter(tokenizer, words));
+            }
+        };
+
+        // No concatenation should occur with empty words set
+        assertAnalyzesTo(analyzer, "100 円", //
+                new String[] { "100", "円" }, //
+                new int[] { 1, 1 });
+    }
+
+    @Test
+    public void testNonDigitToken() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("円");
+        final CharArraySet words = new CharArraySet(list, false);
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new NumberConcatenationFilter(tokenizer, words));
+            }
+        };
+
+        // Non-digit token followed by concatenation word should not concatenate
+        assertAnalyzesTo(analyzer, "abc 円", //
+                new String[] { "abc", "円" }, //
+                new int[] { 1, 1 });
+    }
+
+    @Test
+    public void testEmptyInput() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("円");
+        final CharArraySet words = new CharArraySet(list, false);
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new NumberConcatenationFilter(tokenizer, words));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "", new String[0]);
+    }
+
+    @Test
+    public void testFullWidthDigit() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("円");
+        final CharArraySet words = new CharArraySet(list, false);
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new NumberConcatenationFilter(tokenizer, words));
+            }
+        };
+
+        // Full-width digits are recognized by Character.isDigit
+        assertAnalyzesTo(analyzer, "１００ 円", //
+                new String[] { "１００円" }, //
+                new int[] { 1 });
+    }
+
 }

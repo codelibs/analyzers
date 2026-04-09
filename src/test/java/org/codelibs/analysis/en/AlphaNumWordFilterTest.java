@@ -235,6 +235,68 @@ public class AlphaNumWordFilterTest extends BaseTokenStreamTestCase {
         );
     }
 
+    @Test
+    public void testMaxTokenLengthValidation() throws Exception {
+        AlphaNumWordFilter filter = new AlphaNumWordFilter(new NGramTokenizer(1, 1));
+        try {
+            filter.setMaxTokenLength(0);
+            fail("Expected IllegalArgumentException for maxTokenLength=0");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        try {
+            filter.setMaxTokenLength(-1);
+            fail("Expected IllegalArgumentException for maxTokenLength=-1");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        try {
+            filter.setMaxTokenLength(AlphaNumWordFilter.MAX_TOKEN_LENGTH_LIMIT + 1);
+            fail("Expected IllegalArgumentException for maxTokenLength > MAX_TOKEN_LENGTH_LIMIT");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        // boundary valid values should not throw
+        filter.setMaxTokenLength(1);
+        assertEquals(1, filter.getMaxTokenLength());
+        filter.setMaxTokenLength(AlphaNumWordFilter.MAX_TOKEN_LENGTH_LIMIT);
+        assertEquals(AlphaNumWordFilter.MAX_TOKEN_LENGTH_LIMIT, filter.getMaxTokenLength());
+        filter.close();
+    }
+
+    @Test
+    public void testEmptyInput() throws Exception {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new NGramTokenizer(1, 1);
+                return new TokenStreamComponents(tokenizer, new AlphaNumWordFilter(tokenizer));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "", new String[0]);
+    }
+
+    @Test
+    public void testHangulSyllable() throws Exception {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new NGramTokenizer(1, 1);
+                return new TokenStreamComponents(tokenizer, new AlphaNumWordFilter(tokenizer));
+            }
+        };
+
+        // Hangul Syllable (가 U+AC00) should be HANGUL type
+        String input = "가";
+        assertAnalyzesTo(analyzer, input, //
+                new String[] { "가" }, //
+                new int[] { 0 }, //
+                new int[] { 1 }, //
+                new String[] { TOKEN_TYPES[HANGUL] }, //
+                new int[] { 1 });
+    }
+
     private Analyzer createAnalzyer(final int length) {
         Analyzer analyzer = new Analyzer() {
             @Override

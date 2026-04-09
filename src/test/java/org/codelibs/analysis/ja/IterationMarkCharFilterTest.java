@@ -70,4 +70,46 @@ public class IterationMarkCharFilterTest extends BaseTokenStreamTestCase {
 
     }
 
+    @Test
+    public void testVoicedKatakanaIterationMarkAlone() throws IOException {
+        // ヾ (U+30FE) at position 0 should be preserved as-is
+        assertTokenStreamContents(createTokeStream("ヾ"), new String[] { "ヾ" }, new int[] { 0 }, new int[] { 1 });
+    }
+
+    @Test
+    public void testIterationMarkAtStart() throws IOException {
+        // 々 at position 0 followed by text should preserve 々
+        assertTokenStreamContents(createTokeStream("々abc"), new String[] { "々abc" }, new int[] { 0 }, new int[] { 4 });
+    }
+
+    @Test
+    public void testDoubleIterationMarkAtStart() throws IOException {
+        // 々々 at the very start of input (no preceding kanji)
+        assertTokenStreamContents(createTokeStream("々々"), new String[] { "々々" }, new int[] { 0 }, new int[] { 2 });
+    }
+
+    @Test
+    public void testUnvoicedHiraganaIterationMark() throws IOException {
+        // ゝ preceded by a char NOT in VOICED_SOUND_MARK_HIRAGANA (e.g., "か" is unvoiced)
+        // should just repeat the previous char
+        assertTokenStreamContents(createTokeStream("かゝ"), new String[] { "かか" }, new int[] { 0 }, new int[] { 2 });
+    }
+
+    @Test
+    public void testVoicedKatakanaIterationMarkAfterKatakana() throws IOException {
+        // ヾ (U+30FE) after an unvoiced katakana should produce the voiced variant
+        assertTokenStreamContents(createTokeStream("カヾ"), new String[] { "カガ" }, new int[] { 0 }, new int[] { 2 });
+    }
+
+    @Test
+    public void testKatakanaUnvoicedIterationMarkAfterVoiced() throws IOException {
+        // ヽ (U+30FD) after a voiced katakana should produce the unvoiced variant
+        assertTokenStreamContents(createTokeStream("ガヽ"), new String[] { "ガカ" }, new int[] { 0 }, new int[] { 2 });
+    }
+
+    @Test
+    public void testEmptyInput() throws IOException {
+        assertTokenStreamContents(createTokeStream(""), new String[0]);
+    }
+
 }

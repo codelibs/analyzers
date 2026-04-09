@@ -89,4 +89,26 @@ public class PosConcatenationFilterTest extends BaseTokenStreamTestCase {
                 new int[] { 1, 1, 1, 1, 1 });
     }
 
+    @Test
+    public void testEmptyInput() throws IOException {
+        final Set<String> posTags = new HashSet<>();
+        posTags.add("名詞-一般");
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new JapaneseTokenizer(null, false, JapaneseTokenizer.Mode.SEARCH);
+                final PartOfSpeechAttribute posAtt = tokenizer.addAttribute(PartOfSpeechAttribute.class);
+                return new TokenStreamComponents(tokenizer,
+                        new PosConcatenationFilter(tokenizer, posTags, new PosConcatenationFilter.PartOfSpeechSupplier() {
+                            @Override
+                            public String get() {
+                                return posAtt.getPartOfSpeech();
+                            }
+                        }));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "", new String[0]);
+    }
+
 }

@@ -54,6 +54,62 @@ public class ReloadableStopFilterTest extends BaseTokenStreamTestCase {
 
     }
 
+    @Test
+    public void testCaseSensitive() throws Exception {
+        final Path dictPath = Files.createTempFile("rsf_cs_", ".txt");
+        writeFile(dictPath, "aaa");
+
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, false, 500));
+            }
+        };
+
+        // Case-sensitive: "AAA" should NOT be stopped when stop word is "aaa"
+        assertAnalyzesTo(analyzer, "aaa AAA bbb", new String[] { "AAA", "bbb" });
+    }
+
+    @Test
+    public void testEmptyStopFile() throws Exception {
+        final Path dictPath = Files.createTempFile("rsf_empty_", ".txt");
+        writeFile(dictPath, "");
+
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, true, 500));
+            }
+        };
+
+        // Empty file means no stop words, all tokens pass
+        assertAnalyzesTo(analyzer, "aaa bbb", new String[] { "aaa", "bbb" });
+    }
+
+    @Test
+    public void testMultipleStopWords() throws Exception {
+        final Path dictPath = Files.createTempFile("rsf_multi_", ".txt");
+        writeFile(dictPath, "aaa\nbbb\nccc");
+
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new ReloadableStopFilter(tokenizer, dictPath, true, 500));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "aaa bbb ccc ddd", new String[] { "ddd" });
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonExistentFile() throws Exception {
+        final Path dictPath = Path.of("/tmp/non_existent_rsf_file_" + System.nanoTime() + ".txt");
+        new ReloadableStopFilter(new WhitespaceTokenizer(), dictPath, true, 500);
+    }
+
     private void writeFile(Path dictPath, String content) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(dictPath, Charset.forName("UTF-8"))) {
             writer.write(content);

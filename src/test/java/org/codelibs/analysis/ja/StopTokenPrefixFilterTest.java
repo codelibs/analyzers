@@ -89,4 +89,63 @@ public class StopTokenPrefixFilterTest extends BaseTokenStreamTestCase {
         assertAnalyzesTo(analyzer, "aDDb", new String[] { "aDDb" });
     }
 
+    @Test
+    public void testEmptyStopWord() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenPrefixFilter(tokenizer, new String[] { "" }, false));
+            }
+        };
+
+        // Empty stop word matches all tokens since "anything".startsWith("") is true
+        assertAnalyzesTo(analyzer, "aaa bbb ccc", new String[0]);
+    }
+
+    @Test
+    public void testStopWordLongerThanToken() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenPrefixFilter(tokenizer, new String[] { "testing" }, false));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "test", new String[] { "test" });
+        assertAnalyzesTo(analyzer, "testing", new String[0]);
+        assertAnalyzesTo(analyzer, "testingmore", new String[0]);
+    }
+
+    @Test
+    public void testJapanesePrefix() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenPrefixFilter(tokenizer, new String[] { "東京" }, false));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "東京都 大阪府 東京タワー", //
+                new String[] { "大阪府" }, //
+                new int[] { 4 }, //
+                new int[] { 7 }, //
+                new int[] { 2 });
+    }
+
+    @Test
+    public void testEmptyInput() throws IOException {
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new StopTokenPrefixFilter(tokenizer, new String[] { "a" }, false));
+            }
+        };
+
+        assertAnalyzesTo(analyzer, "", new String[0]);
+    }
+
 }

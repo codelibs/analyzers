@@ -56,6 +56,49 @@ public class ReloadableKeywordMarkerFilterTest extends BaseTokenStreamTestCase {
 
     }
 
+    @Test
+    public void testEmptyKeywordFile() throws Exception {
+        final Path dictPath = Files.createTempFile("rkmf_empty_", ".txt");
+        writeFile(dictPath, "");
+
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new ReloadableKeywordMarkerFilter(tokenizer, dictPath, 500));
+            }
+        };
+
+        // Empty file means no keywords, no token is marked as keyword
+        String input = "aaa bbb";
+        assertTokenStreamContents(analyzer.tokenStream("dummy", input), new String[] { "aaa", "bbb" }, new int[] { 0, 4 },
+                new int[] { 3, 7 }, null, null, null, input.length(), new boolean[] { false, false }, true);
+    }
+
+    @Test
+    public void testMultipleKeywords() throws Exception {
+        final Path dictPath = Files.createTempFile("rkmf_multi_", ".txt");
+        writeFile(dictPath, "aaa\nbbb");
+
+        Analyzer analyzer = new Analyzer() {
+            @Override
+            protected TokenStreamComponents createComponents(final String fieldName) {
+                final Tokenizer tokenizer = new WhitespaceTokenizer();
+                return new TokenStreamComponents(tokenizer, new ReloadableKeywordMarkerFilter(tokenizer, dictPath, 500));
+            }
+        };
+
+        String input = "aaa bbb ccc";
+        assertTokenStreamContents(analyzer.tokenStream("dummy", input), new String[] { "aaa", "bbb", "ccc" }, new int[] { 0, 4, 8 },
+                new int[] { 3, 7, 11 }, null, null, null, input.length(), new boolean[] { true, true, false }, true);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonExistentFile() throws Exception {
+        final Path dictPath = Path.of("/tmp/non_existent_rkmf_file_" + System.nanoTime() + ".txt");
+        new ReloadableKeywordMarkerFilter(new WhitespaceTokenizer(), dictPath, 500);
+    }
+
     private void writeFile(Path dictPath, String content) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(dictPath, Charset.forName("UTF-8"))) {
             writer.write(content);

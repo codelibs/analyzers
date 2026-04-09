@@ -246,6 +246,18 @@ public class KanjiNumberFilterTest extends BaseTokenStreamTestCase {
     }
 
     @Test
+    public void testFullWidthDecimalPoint() throws IOException {
+        // Full-width decimal point ．(U+FF0E) should be recognized
+        assertAnalyzesTo(analyzer, "３．２千円", new String[] { "3200", "円" });
+    }
+
+    @Test
+    public void testFullWidthThousandSeparator() throws IOException {
+        // Full-width comma ，(U+FF0C) should be recognized as thousand separator
+        assertAnalyzesTo(analyzer, "4，647", new String[] { "4647" });
+    }
+
+    @Test
     public void testAllExponents() throws IOException {
         // Test that all exponents (十,百,千,万,億,兆,京,垓) are correctly mapped in HashMap
         assertAnalyzesTo(analyzer, "十", new String[] { "10" });
