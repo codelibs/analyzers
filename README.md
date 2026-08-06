@@ -4,7 +4,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.codelibs/analyzers.svg?label=Maven%20Central)](https://central.sonatype.com/search?q=g%3Aorg.codelibs%20a%3Aanalyzers)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A comprehensive Java library providing extended Lucene analyzers with specialized support for Japanese and English text processing. Built on Apache Lucene 10.2.2 with Java 21 compatibility.
+A comprehensive Java library providing extended Lucene analyzers with specialized support for Japanese and English text processing. Built on Apache Lucene 10.5.0 with Java 21 compatibility.
 
 ## 🚀 Features
 
@@ -37,20 +37,20 @@ A comprehensive Java library providing extended Lucene analyzers with specialize
 <dependency>
     <groupId>org.codelibs</groupId>
     <artifactId>analyzers</artifactId>
-    <version>10.2.2.0</version>
+    <version>10.4.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'org.codelibs:analyzers:10.2.2.0'
+implementation 'org.codelibs:analyzers:10.4.0.0'
 ```
 
 ## 🏗️ Requirements
 
 - **Java**: 21 or higher
-- **Apache Lucene**: 10.2.2
+- **Apache Lucene**: 10.5.0
 - **Maven**: 3.6+ (for building from source)
 
 ## 🔧 Usage Examples
@@ -185,5 +185,5 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](http://www.apache.
 
 The version number follows Lucene's versioning scheme with an additional patch level:
 - Format: `{lucene.version}.{patch}`
-- Current: `10.2.2.0` (based on Lucene 10.2.2)
+- Latest release: `10.4.0.0` (based on Lucene 10.4.0)
 
